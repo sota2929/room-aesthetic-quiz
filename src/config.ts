@@ -1,7 +1,7 @@
 export const SITE_CONFIG = {
   productName: 'Room Aesthetic Starter Kit',
   productUrl: 'https://gumroad.com/l/room-aesthetic-starter-kit',
-  landingPageUrl: 'https://YOUR-USERNAME.github.io/room-aesthetic-quiz/',
+  landingPageUrl: 'https://sota2929.github.io/room-aesthetic-quiz/',
 } as const
 
 export const TRACKING_EVENTS = {

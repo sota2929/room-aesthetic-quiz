@@ -2,6 +2,8 @@
 
 Pinterestから訪れた米国のGen Zユーザー向けに、12問の回答から6種類の部屋スタイルを提案する無料診断MVPです。バックエンド、ログイン、データベース、個人情報収集はありません。Vite + React + TypeScript + Plain CSSで作られており、GitHub Pagesへそのまま公開できます。
 
+公開サイト: https://sota2929.github.io/room-aesthetic-quiz/
+
 ## 実装内容
 
 - Pinterest流入向けランディングページ
