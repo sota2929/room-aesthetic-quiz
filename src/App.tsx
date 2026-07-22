@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { heroRoom, roomImages } from './assets'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
 import { questions } from './data/questions'
 import { productContent } from './data/product'
@@ -99,9 +100,14 @@ function App() {
 
   const previewCards = useMemo(() => results.map((item) => (
     <article className="preview-card" key={item.id} style={{ '--card-accent': item.softAccent } as React.CSSProperties}>
-      <span className="preview-symbol" aria-hidden="true">{item.symbol}</span>
-      <h3>{item.name}</h3>
-      <p>{item.tagline}</p>
+      <div className="preview-image-wrap">
+        <img src={roomImages[item.id]} alt={`${item.name} bedroom inspiration`} loading="lazy" />
+        <span className="preview-symbol" aria-hidden="true">{item.symbol}</span>
+      </div>
+      <div className="preview-card-copy">
+        <h3>{item.name}</h3>
+        <p>{item.tagline}</p>
+      </div>
     </article>
   )), [])
 
@@ -130,16 +136,10 @@ function App() {
               <span><strong>Practical</strong> 3-step plan</span>
             </div>
           </div>
-          <div className="hero-art" aria-label="Abstract room moodboard illustration">
-            <div className="sun-shape" />
-            <div className="art-card art-card-main">
-              <span className="art-label">your room mood</span>
-              <div className="art-window"><span /><span /></div>
-              <div className="art-bed"><span /></div>
-              <div className="art-plant">❋</div>
-            </div>
-            <div className="swatch-card"><span /><span /><span /></div>
-            <div className="mini-note">made for<br /><strong>your real space</strong></div>
+          <div className="hero-art">
+            <img className="hero-room-image" src={heroRoom} alt="Warm small bedroom styled with cream, sage, blush, and light wood" />
+            <div className="hero-image-note"><span>6 styles</span><strong>One that feels like you</strong></div>
+            <div className="hero-image-badge" aria-hidden="true">✦</div>
           </div>
         </section>
 
@@ -186,7 +186,10 @@ function App() {
 
       {screen === 'result' && <main className="result-page" style={{ '--result-accent': result.accent, '--result-soft': result.softAccent } as React.CSSProperties}>
         <section className="result-hero">
-          <div className="result-symbol" aria-hidden="true">{result.symbol}</div>
+          <div className="result-image-wrap">
+            <img src={roomImages[result.id]} alt={`${result.name} bedroom inspiration`} />
+            <div className="result-symbol" aria-hidden="true">{result.symbol}</div>
+          </div>
           <span className="eyebrow">Your result</span>
           <h1>{result.name}</h1>
           <span className="match-badge">{matchPercent(resultScores[result.id])}% match</span>
