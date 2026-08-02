@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const pinterestTagId = import.meta.env.VITE_PINTEREST_TAG_ID?.trim()
+const pinterestTagId = import.meta.env.VITE_PINTEREST_TAG_ID?.trim() || '2613658758244'
 
 const pinterestEventNames: Record<string, string> = {
   quiz_started: 'quiz_started',

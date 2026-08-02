@@ -93,7 +93,7 @@ productUrl: 'https://gumroad.com/l/room-aesthetic-starter-kit',
 
 ## Pinterestイベントトラッキング
 
-PinterestでアドアカウントとConversion Tagを作成後、GitHubリポジトリの **Settings → Secrets and variables → Actions → Variables** に `PINTEREST_TAG_ID` を登録してください。GitHub Pagesの次回デプロイ時にタグIDがビルドへ渡されます。値が未設定の場合は、計測処理は安全に無効化されます。
+Pinterest Conversion Tag ID `2613658758244` を既定値として設定しています。別のタグへ切り替える場合は、GitHubリポジトリの **Settings → Secrets and variables → Actions → Variables** に `PINTEREST_TAG_ID` を登録してください。GitHub Pagesの次回デプロイ時に環境変数の値が既定値を上書きします。
 
 `src/tracking.ts` はページ訪問に加えて次のイベントをPinterestへ送信します。個人情報は送信しません。
 
