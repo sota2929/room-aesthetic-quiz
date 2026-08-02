@@ -250,7 +250,7 @@ function App() {
         <div className="retake-wrap"><button className="secondary-button share-button" onClick={shareResult}>↗ {shareStatus}</button><button className="secondary-button" onClick={retakeQuiz}>↻ Retake quiz</button><button className="text-button" onClick={() => { setScreen('landing'); scrollToTop() }}>Back to home</button></div>
       </main>}
 
-      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · No personal data collected.</p></footer>
+      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · No email required · <a href="./privacy.html">Privacy</a></p></footer>
     </div>
   )
 }

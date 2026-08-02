@@ -11,7 +11,7 @@ Pinterestから訪れた米国のGen Zユーザー向けに、12問の回答か�
 - Cozy Minimalist / Clean Girl Room / Dark Academia / Soft Girl / Pastel Room / Modern Boho / Moody Maximalist の6結果
 - 色、雰囲気、装飾、避けるもの、最初の3ステップの個別提案
 - Room Aesthetic Starter Kit の自然な紹介とGumroad仮リンク
-- `console.log`ベースの仮イベントトラッキング
+- Pinterest Tagによるページ訪問・診断・商品CTAのイベントトラッキング
 - SEO、Open Graph、Twitter Cardメタデータ
 - GitHub ActionsによるGitHub Pagesデプロイ
 - Pinterest投稿案50件とCanva制作資料
@@ -91,9 +91,11 @@ productUrl: 'https://gumroad.com/l/room-aesthetic-starter-kit',
 
 ランディングページと全結果ページのCTAが同時に切り替わります。決済処理はサイト内に実装していません。
 
-## 仮イベントトラッキング
+## Pinterestイベントトラッキング
 
-次のイベントを `src/tracking.ts` がブラウザのコンソールへ出力します。
+PinterestでアドアカウントとConversion Tagを作成後、GitHubリポジトリの **Settings → Secrets and variables → Actions → Variables** に `PINTEREST_TAG_ID` を登録してください。GitHub Pagesの次回デプロイ時にタグIDがビルドへ渡されます。値が未設定の場合は、計測処理は安全に無効化されます。
+
+`src/tracking.ts` はページ訪問に加えて次のイベントをPinterestへ送信します。個人情報は送信しません。
 
 - `quiz_started`
 - `quiz_completed`
@@ -102,7 +104,9 @@ productUrl: 'https://gumroad.com/l/room-aesthetic-starter-kit',
 - `retake_quiz_clicked`
 - `result_shared`
 
-将来Google AnalyticsやPlausibleを入れる場合は、UI側ではなく `trackEvent()` の中身だけを差し替えます。イベントプロパティには結果IDやCTA位置だけを渡し、個人情報は収集しません。
+`quiz_completed` は標準の `lead`、`result_viewed` は標準の `viewcontent` に対応させ、その他はカスタムイベントとして送信します。すべての操作イベントに重複判定用の `event_id` を付与します。
+
+Pinterest TagはCookie等を利用するため、公開サイトには `public/privacy.html` の簡易プライバシー表示も含めています。メールアドレスなどの連絡先情報や決済情報は送信しません。
 
 ## GitHub Pagesへの公開
 
