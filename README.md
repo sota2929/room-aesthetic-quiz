@@ -10,8 +10,9 @@ Pinterestから訪れた米国のGen Zユーザー向けに、12問の回答か�
 - 1問ずつ進む12問の診断（進捗、戻る、最初からやり直す機能付き）
 - Cozy Minimalist / Clean Girl Room / Dark Academia / Soft Girl / Pastel Room / Modern Boho / Moody Maximalist の6結果
 - 色、雰囲気、装飾、避けるもの、最初の3ステップの個別提案
-- Room Aesthetic Starter Kit の自然な紹介とGumroad仮リンク
-- Pinterest Tagによるページ訪問・診断・商品CTAのイベントトラッキング
+- Room Aesthetic Starter Kit（$7）の紹介とGumroadリンク
+- Pinterest Tagと任意のGA4によるページ訪問・診断・商品CTAのイベントトラッキング
+- Pinterest流入UTMのセッション保存、流入別ランディング、クイズ直行URL
 - SEO、Open Graph、Twitter Cardメタデータ
 - GitHub ActionsによるGitHub Pagesデプロイ
 - Pinterest投稿案50件とCanva制作資料
@@ -48,6 +49,8 @@ npm run preview
 | 6結果の説明、色、装飾、3ステップ | `src/data/results.ts` |
 | 商品紹介コピー、内容、価格表現 | `src/data/product.ts` |
 | Gumroad URL、公開URL、商品名 | `src/config.ts` |
+| 流入別ファーストビュー | `src/data/entryLanding.ts` |
+| UTM保存・Gumroadへの引き継ぎ | `src/attribution.ts` |
 | イベント名 | `src/config.ts` の `TRACKING_EVENTS` |
 | イベント送信処理 | `src/tracking.ts` |
 | 色、余白、カード等のデザイン | `src/styles.css` の `:root` |
@@ -81,9 +84,17 @@ npm run preview
 
 判定は `src/App.tsx` の `calculateResult` にあります。比較が `>` のため、同点では既存の先順位が保持されます。
 
+## UTM・流入別URL
+
+最初のページ表示で `utm_source`、`utm_medium`、`utm_campaign`、`utm_content`、`entry`、`start` を取得し、ブラウザの `sessionStorage` に保存します。その後のPinterest/GA4イベントとGumroad URLへ同じ値を付けます。個人情報は保存しません。
+
+- `?start=1`: ランディングを省略して質問1を表示
+- `?entry=cozy-minimalist` など: Pin内容に合う短いファーストビューを表示
+- 対応entry: `cozy-minimalist`, `clean-girl`, `dark-academia`, `soft-girl`, `modern-boho`, `moody-maximalist`, `dorm`, `small-room`
+
 ## Gumroadリンクの変更
 
-`src/config.ts` の次の1行だけ変更します。
+`src/config.ts` の次の1行だけ変更します。サイト内のCTAは保存済みUTMを `URL` APIで安全に追加します。
 
 ```ts
 productUrl: 'https://gumroad.com/l/room-aesthetic-starter-kit',
@@ -107,6 +118,24 @@ Pinterest Conversion Tag ID `2613658758244` を既定値として設定してい
 `quiz_completed` は標準の `lead`、`result_viewed` は標準の `viewcontent` に対応させ、その他はカスタムイベントとして送信します。すべての操作イベントに重複判定用の `event_id` を付与します。
 
 Pinterest TagはCookie等を利用するため、公開サイトには `public/privacy.html` の簡易プライバシー表示も含めています。メールアドレスなどの連絡先情報や決済情報は送信しません。
+
+## GA4（任意・無料枠で利用可能）
+
+GA4を使う場合だけ、GitHubリポジトリの **Settings → Secrets and variables → Actions → Variables** に次を登録します。
+
+```text
+GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡します。ローカルでは `.env.local` に `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定します。値がなければGAスクリプトもイベントも送信されず、エラーにもなりません。
+
+送信イベントは `page_view`, `quiz_started`, `quiz_completed`, `result_viewed`, `product_cta_clicked`, `result_shared`, `retake_quiz_clicked` です。`product_cta_clicked` の `location` は `landing`, `result_early`, `result_bottom` を区別します。
+
+### Gumroad側で必要な手動設定
+
+購入までGA4で確認したい場合、Gumroadの分析・Google Analytics設定欄にサイトと同じGA4測定IDを設定してください。Gumroadの現在の管理画面や利用プランでGA4設定が提供されている場合に限ります。外部ドメインへの遷移なので、GA4管理画面のデータストリームでクロスドメイン対象に `sota2929.github.io` と `gumroad.com`（または実際の販売ドメイン）を追加し、除外参照にも必要に応じて決済ドメインを設定します。
+
+サイト側はUTMをGumroad URLへ渡しますが、購入イベントはGumroad側の実装・同意設定・ブラウザ制限に依存します。設定後はGA4 DebugViewと実際の無料テスト/テスト購入手段で確認してください。CodexはGumroadアカウント内の設定や課金操作を自動では行いません。
 
 ## GitHub Pagesへの公開
 

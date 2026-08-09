@@ -3,13 +3,13 @@
 ## Website
 
 - [x] Build the landing page, 12-question quiz, six results, and Starter Kit CTA.
-- [ ] Replace `YOUR-USERNAME` in the project URLs before publishing.
+- [x] Confirm the production GitHub Pages URL in site and Pin links.
 - [ ] Test every answer on a phone-sized screen.
 - [ ] Test Back, Start over, Retake quiz, and Home actions.
 - [ ] Confirm each result can be reached with a consistent answer pattern.
 - [ ] Confirm no email or personal information is requested.
-- [ ] Replace the placeholder Gumroad URL in `src/config.ts` when the real product page is ready.
-- [ ] Add a real Open Graph image later if desired.
+- [x] Confirm the live Gumroad product URL in `src/config.ts`.
+- [x] Add canonical, Open Graph, and Twitter image metadata.
 - [ ] Run the production build and open the built site.
 - [ ] Publish to GitHub Pages and test the public URL.
 
@@ -31,5 +31,5 @@
 - [ ] Create 2–3 new variations of each winning concept.
 - [ ] Improve the quiz landing copy if Pins get impressions but few clicks.
 - [ ] Improve the result-page CTA if quizzes finish but product clicks stay low.
-- [ ] Build and upload the Starter Kit before changing “Coming soon” language.
+- [x] Confirm the Starter Kit is available and keep the site price/status aligned with Gumroad.
 - [ ] Consider paid Pinterest ads only after organic content proves which angle converts.

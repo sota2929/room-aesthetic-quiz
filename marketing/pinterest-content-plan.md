@@ -59,3 +59,23 @@ Post consistently rather than all at once. A simple starting rhythm is one Pin p
 - Which top two Pins should get 2–3 new variations next week?
 
 Do not introduce paid Pinterest ads until multiple organic Pins repeatedly produce outbound clicks and the quiz-to-product journey is ready.
+
+## Funnel and URL rules
+
+Every Pin must be attributable from impression through product click:
+
+1. Pinterest Pin (`utm_content` identifies the exact Pin)
+2. Focused entry page or direct quiz start
+3. Quiz completion and result view
+4. Early or bottom Starter Kit CTA
+5. Gumroad product page with the original UTM values preserved
+
+Use `utm_source=pinterest`, `utm_medium=organic`, and `utm_campaign=room_quiz` on every organic Pin. Set `utm_content` to the Pin ID, such as `P041`.
+
+- Quiz invitations and comparison Pins use `start=1` to open question 1 immediately.
+- Aesthetic teasers use the matching `entry` value so the focused first view bridges the Pin and the quiz.
+- Dorm and small-room Pins use `entry=dorm` or `entry=small-room` without `start=1`, because their focused first view adds useful context.
+- Product teasers open the standard landing page so the free quiz remains the primary next step.
+- Do not promise articles, downloads, checklists, or budget results that the destination does not provide. The Pin itself may contain useful checklist content, while the click promise must accurately describe the quiz or Starter Kit.
+
+Review the funnel weekly by `utm_content`: outbound clicks → `quiz_started` → `quiz_completed` → `product_cta_clicked`. Compare `result_early` and `result_bottom` CTA locations before changing the page.

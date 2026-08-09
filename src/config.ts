@@ -5,6 +5,7 @@ export const SITE_CONFIG = {
 } as const
 
 export const TRACKING_EVENTS = {
+  pageView: 'page_view',
   quizStarted: 'quiz_started',
   quizCompleted: 'quiz_completed',
   resultViewed: 'result_viewed',

@@ -3,10 +3,10 @@ export const productContent = {
   resultHeadline: 'Want a step-by-step room makeover plan?',
   resultDescription: 'The Room Aesthetic Starter Kit helps you turn your result into a room plan you can actually follow.',
   landingHeadline: 'A room plan you’ll actually use.',
-  landingDescription: 'The Room Aesthetic Starter Kit turns your inspiration into clear next steps—so you can plan before you shop.',
+  landingDescription: 'Turn scattered inspiration into one usable plan: a palette, moodboard, layout, budget, priorities, and shopping list you can edit at your own pace.',
   buttonLabel: 'Get the Room Aesthetic Starter Kit',
-  statusLabel: 'Coming soon',
-  priceNote: 'Planned price: around $7',
+  statusLabel: 'Available now',
+  priceNote: '$7 one-time purchase · Instant digital download',
   contents: [
     'Room Makeover Checklist',
     'Canva Moodboard Template',

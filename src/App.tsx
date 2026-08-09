@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { heroRoom, roomImages } from './assets'
+import { getCurrentEntry, shouldStartImmediately, withAttribution } from './attribution'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
+import { getEntryLanding } from './data/entryLanding'
 import { questions } from './data/questions'
 import { productContent } from './data/product'
 import { results, resultsById } from './data/results'
@@ -10,6 +12,8 @@ import { aestheticIds, type AestheticId } from './types'
 type Screen = 'landing' | 'quiz' | 'result'
 type AnswerMap = Record<string, string>
 type ScoreMap = Record<AestheticId, number>
+const initialDirectStart = shouldStartImmediately()
+let directStartTracked = false
 
 function calculateResult(answers: AnswerMap) {
   const scores = Object.fromEntries(aestheticIds.map((id) => [id, 0])) as Record<AestheticId, number>
@@ -30,13 +34,23 @@ function calculateResult(answers: AnswerMap) {
 }
 
 function App() {
-  const [screen, setScreen] = useState<Screen>('landing')
+  const [screen, setScreen] = useState<Screen>(initialDirectStart ? 'quiz' : 'landing')
   const [questionIndex, setQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<AnswerMap>({})
   const [resultId, setResultId] = useState<AestheticId>('cozy-minimalist')
   const [resultScores, setResultScores] = useState<ScoreMap>(Object.fromEntries(aestheticIds.map((id) => [id, 0])) as ScoreMap)
   const [resultSignals, setResultSignals] = useState<string[]>([])
   const [shareStatus, setShareStatus] = useState('Share my result')
+  const entryLanding = getEntryLanding(getCurrentEntry())
+  const entryImage = entryLanding?.image === 'hero' ? heroRoom : entryLanding ? roomImages[entryLanding.image] : heroRoom
+  const productUrl = withAttribution(SITE_CONFIG.productUrl)
+
+  useEffect(() => {
+    if (initialDirectStart && !directStartTracked) {
+      directStartTracked = true
+      trackEvent(TRACKING_EVENTS.quizStarted, { start_method: 'direct' })
+    }
+  }, [])
 
   const currentQuestion = questions[questionIndex]
   const result = resultsById[resultId]
@@ -81,7 +95,7 @@ function App() {
   }
 
   const shareResult = async () => {
-    const shareText = `My room aesthetic is ${result.name} — ${result.tagline}. Find yours:`
+    const shareText = `I got ${result.name} ✦ ${result.tagline}. Which room aesthetic are you? Take the free 12-question quiz:`
     const shareData = { title: `My room aesthetic: ${result.name}`, text: shareText, url: window.location.href }
     try {
       if (navigator.share) {
@@ -122,13 +136,13 @@ function App() {
       </header>
 
       {screen === 'landing' && <main>
-        <section className="hero">
+        <section className={`hero ${entryLanding ? 'entry-hero' : ''}`}>
           <div className="hero-copy">
-            <span className="eyebrow"><span>✦</span> Your dream room starts here</span>
-            <h1>What’s Your<br /><em>Room Aesthetic?</em></h1>
-            <p className="hero-subtitle">Take the free quiz and find your dream room style.</p>
-            <p className="hero-description">Discover the colors, decor, and first steps that can make your bedroom, dorm, or first apartment feel more like you.</p>
-            <button className="primary-button" onClick={startQuiz}>Start the Free Quiz <span aria-hidden="true">→</span></button>
+            <span className="eyebrow"><span>✦</span> {entryLanding?.eyebrow ?? 'Your dream room starts here'}</span>
+            <h1>{entryLanding ? <>{entryLanding.headline}<br /><em>{entryLanding.emphasis}</em></> : <>What’s Your<br /><em>Room Aesthetic?</em></>}</h1>
+            <p className="hero-subtitle">Take the free 12-question quiz and get an instant room style result.</p>
+            <p className="hero-description">{entryLanding?.description ?? 'Discover the colors, decor, and first steps that can make your bedroom, dorm, or first apartment feel more like you.'}</p>
+            <button className="primary-button" onClick={startQuiz}>{entryLanding?.cta ?? 'Start the Free Quiz'} <span aria-hidden="true">→</span></button>
             <p className="privacy-note"><span aria-hidden="true">✓</span> No email required. Just 12 quick questions.</p>
             <div className="hero-benefits" aria-label="What the quiz includes">
               <span><strong>Instant</strong> style result</span>
@@ -137,7 +151,7 @@ function App() {
             </div>
           </div>
           <div className="hero-art">
-            <img className="hero-room-image" src={heroRoom} alt="Warm small bedroom styled with cream, sage, blush, and light wood" />
+            <img className="hero-room-image" src={entryImage} alt={entryLanding?.imageAlt ?? 'Warm small bedroom styled with cream, sage, blush, and light wood'} />
             <div className="hero-image-note"><span>6 styles</span><strong>One that feels like you</strong></div>
             <div className="hero-image-badge" aria-hidden="true">✦</div>
           </div>
@@ -198,6 +212,11 @@ function App() {
           <div className="vibe-row">{result.vibe.map((word) => <span key={word}>{word}</span>)}</div>
         </section>
 
+        <section className="result-early-product" aria-label="Room Aesthetic Starter Kit">
+          <div><span className="eyebrow">Make your {result.name} result real</span><h2>Turn this direction into a room plan.</h2><p>Use the $7 Starter Kit to choose your palette, layout, priorities, budget, and shopping list before you buy.</p></div>
+          <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_early', result: result.id })}>Get the $7 Starter Kit <span>↗</span></a>
+        </section>
+
         <section className="result-content">
           <div className="style-mix-card">
             <div className="style-mix-copy">
@@ -243,7 +262,7 @@ function App() {
           <div className="product-cta-box">
             <span className="coming-soon">{productContent.statusLabel}</span>
             <p>Plan your palette, priorities, layout, and shopping list—without buying random decor first.</p>
-            <a className="primary-button" href={SITE_CONFIG.productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result', result: result.id })}>{productContent.buttonLabel} <span>↗</span></a>
+            <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_bottom', result: result.id })}>{productContent.buttonLabel} <span>↗</span></a>
             <small>{productContent.priceNote}</small>
           </div>
         </section>
@@ -261,7 +280,7 @@ function ProductSection({ onCta }: { onCta: () => void }) {
       <span className="eyebrow">{productContent.statusLabel}</span>
       <h2>A room plan you’ll<br /><em>actually use.</em></h2>
       <p>{productContent.landingDescription}</p>
-      <a className="secondary-button" href={SITE_CONFIG.productUrl} target="_blank" rel="noreferrer" onClick={onCta}>Preview the Starter Kit <span>↗</span></a>
+      <a className="secondary-button" href={withAttribution(SITE_CONFIG.productUrl)} target="_blank" rel="noreferrer" onClick={onCta}>Get the Starter Kit <span>↗</span></a>
       <small>{productContent.priceNote}</small>
     </div>
     <div className="kit-card">
