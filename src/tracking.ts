@@ -15,6 +15,7 @@ declare global {
 
 const pinterestTagId = import.meta.env.VITE_PINTEREST_TAG_ID?.trim() || '2613658758244'
 const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim()
+const gaDebugMode = new URLSearchParams(window.location.search).get('debug_mode') === '1'
 
 const pinterestEventNames: Record<string, string> = {
   quiz_started: 'custom',
@@ -55,7 +56,11 @@ function ensureGoogleAnalytics() {
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaMeasurementId)}`
     document.head.appendChild(script)
     window.gtag('js', new Date())
-    window.gtag('config', gaMeasurementId, { send_page_view: false })
+    window.gtag('config', gaMeasurementId, {
+      send_page_view: false,
+      debug_mode: gaDebugMode,
+      linker: { domains: ['sota2929.github.io', 'gumroad.com'] },
+    })
   }
   return window.gtag
 }

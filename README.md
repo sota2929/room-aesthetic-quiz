@@ -131,6 +131,8 @@ GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡�
 
 送信イベントは `page_view`, `quiz_started`, `quiz_completed`, `result_viewed`, `product_cta_clicked`, `result_shared`, `retake_quiz_clicked` です。`product_cta_clicked` の `location` は `landing`, `result_early`, `result_bottom` を区別します。
 
+本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1` を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
+
 ### Gumroad側で必要な手動設定
 
 購入までGA4で確認したい場合、Gumroadの分析・Google Analytics設定欄にサイトと同じGA4測定IDを設定してください。Gumroadの現在の管理画面や利用プランでGA4設定が提供されている場合に限ります。外部ドメインへの遷移なので、GA4管理画面のデータストリームでクロスドメイン対象に `sota2929.github.io` と `gumroad.com`（または実際の販売ドメイン）を追加し、除外参照にも必要に応じて決済ドメインを設定します。
