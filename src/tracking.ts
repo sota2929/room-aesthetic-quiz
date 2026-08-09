@@ -66,7 +66,7 @@ function ensureGoogleAnalytics() {
 }
 
 export function initializeTracking() {
-  const attribution = getAttribution()
+  const attribution = { ...getAttribution(), ...(gaDebugMode ? { debug_mode: true } : {}) }
   if (pinterestTagId) {
     const pintrk = ensurePinterestTracker()
     pintrk('load', pinterestTagId)
@@ -76,7 +76,7 @@ export function initializeTracking() {
 }
 
 export function trackEvent(eventName: string, properties: EventProperties = {}) {
-  const data = { ...getAttribution(), ...properties }
+  const data = { ...getAttribution(), ...properties, ...(gaDebugMode ? { debug_mode: true } : {}) }
   if (pinterestTagId) {
     const pinterestEventName = pinterestEventNames[eventName] ?? eventName
     const pinterestData: PinterestEventData = { ...data, event_id: eventId(eventName) }
