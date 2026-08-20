@@ -15,13 +15,15 @@ declare global {
 
 const pinterestTagId = import.meta.env.VITE_PINTEREST_TAG_ID?.trim() || '2613658758244'
 const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim()
-const gaDebugMode = new URLSearchParams(window.location.search).get('debug_mode') === '1'
+const debugModeParam = new URLSearchParams(window.location.search).get('debug_mode')
+const gaDebugMode = debugModeParam === '1' || debugModeParam === 'true'
+let googleAnalyticsConfigured = false
 
 const pinterestEventNames: Record<string, string> = {
-  quiz_started: 'custom',
-  quiz_completed: 'lead',
-  result_viewed: 'viewcontent',
-  product_cta_clicked: 'custom',
+  quiz_start: 'custom',
+  quiz_complete: 'lead',
+  result_view: 'viewcontent',
+  gumroad_click: 'custom',
   retake_quiz_clicked: 'custom',
   result_shared: 'custom',
 }
@@ -48,19 +50,28 @@ function ensurePinterestTracker() {
 
 function ensureGoogleAnalytics() {
   if (!gaMeasurementId) return undefined
+  window.dataLayer = window.dataLayer || []
   if (!window.gtag) {
-    window.dataLayer = window.dataLayer || []
-    window.gtag = (...args: unknown[]) => window.dataLayer?.push(args)
+    // Google Tag expects an Arguments object, matching the official gtag snippet.
+    // Pushing a normal array can leave queued commands unprocessed.
+    window.gtag = function gtag() {
+      window.dataLayer?.push(arguments)
+    }
+  }
+  if (!document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${gaMeasurementId}"]`)) {
     const script = document.createElement('script')
     script.async = true
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaMeasurementId)}`
     document.head.appendChild(script)
+  }
+  if (!googleAnalyticsConfigured) {
     window.gtag('js', new Date())
     window.gtag('config', gaMeasurementId, {
       send_page_view: false,
       debug_mode: gaDebugMode,
       linker: { domains: ['sota2929.github.io', 'gumroad.com'] },
     })
+    googleAnalyticsConfigured = true
   }
   return window.gtag
 }

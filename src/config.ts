@@ -6,10 +6,10 @@ export const SITE_CONFIG = {
 
 export const TRACKING_EVENTS = {
   pageView: 'page_view',
-  quizStarted: 'quiz_started',
-  quizCompleted: 'quiz_completed',
-  resultViewed: 'result_viewed',
-  productCtaClicked: 'product_cta_clicked',
+  quizStarted: 'quiz_start',
+  quizCompleted: 'quiz_complete',
+  resultViewed: 'result_view',
+  productCtaClicked: 'gumroad_click',
   retakeQuizClicked: 'retake_quiz_clicked',
   resultShared: 'result_shared',
 } as const

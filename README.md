@@ -129,9 +129,9 @@ GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡します。ローカルでは `.env.local` に `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定します。値がなければGAスクリプトもイベントも送信されず、エラーにもなりません。
 
-送信イベントは `page_view`, `quiz_started`, `quiz_completed`, `result_viewed`, `product_cta_clicked`, `result_shared`, `retake_quiz_clicked` です。`product_cta_clicked` の `location` は `landing`, `result_early`, `result_bottom` を区別します。
+送信イベントは `page_view`, `quiz_start`, `quiz_complete`, `result_view`, `gumroad_click`, `result_shared`, `retake_quiz_clicked` です。`gumroad_click` の `location` は `landing`, `result_early`, `result_bottom` を区別します。
 
-本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1` を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
+本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1`（または `?debug_mode=true`）を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
 
 ### Gumroad側で必要な手動設定
 
