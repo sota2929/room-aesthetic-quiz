@@ -11,6 +11,7 @@ Pinterestから訪れた米国のGen Zユーザー向けに、12問の回答か�
 - Cozy Minimalist / Clean Girl Room / Dark Academia / Soft Girl / Pastel Room / Modern Boho / Moody Maximalist の6結果
 - 色、雰囲気、装飾、避けるもの、最初の3ステップの個別提案
 - Room Aesthetic Starter Kit（$7）の紹介とGumroadリンク
+- 診断結果別のAmazonアソシエイト商品カテゴリ（各3件）とクリック計測
 - Pinterest Tagと任意のGA4によるページ訪問・診断・商品CTAのイベントトラッキング
 - Pinterest流入UTMのセッション保存、流入別ランディング、クイズ直行URL
 - SEO、Open Graph、Twitter Cardメタデータ
@@ -129,7 +130,7 @@ GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡します。ローカルでは `.env.local` に `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定します。値がなければGAスクリプトもイベントも送信されず、エラーにもなりません。
 
-送信イベントは `page_view`, `quiz_start`, `quiz_complete`, `result_view`, `gumroad_click`, `result_shared`, `retake_quiz_clicked` です。`gumroad_click` の `location` は `landing`, `result_early`, `result_bottom` を区別します。
+送信イベントは `page_view`, `quiz_start`, `quiz_complete`, `result_view`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`gumroad_click` の `location` は `landing`, `result_early`, `result_bottom` を区別します。`amazon_affiliate_click` は診断結果、商品カテゴリ、表示位置を送ります。
 
 本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1`（または `?debug_mode=true`）を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
 
@@ -171,6 +172,12 @@ GitHub Pagesの画面構成は変更される場合があるため、設定名�
 
 CSVをGoogle SheetsやExcelへ読み込み、`target_url` のプレースホルダーを一括置換して運用できます。最初はP001–P003、P011、P016、P021、P036–P037、P041、P046の10件がテスト対象です。
 
+## Amazonアソシエイト
+
+結果画面には、6つのスタイルごとに3件のAmazon商品カテゴリを表示します。リンクには `src/config.ts` の `amazonAssociateTag` が付きます。商品カテゴリと説明は `src/data/affiliateProducts.ts` で編集できます。
+
+Amazonの価格・レビュー・商品画像はサイト内に複製せず、最新情報はAmazon上で確認する設計です。リンク付近と `public/privacy.html` にアフィリエイト開示を表示します。
+
 ## 次にやること
 
 1. スマートフォン実機で全診断フローを確認する。
@@ -182,6 +189,6 @@ CSVをGoogle SheetsやExcelへ読み込み、`target_url` のプレースホル�
 
 ## 注意
 
-- アフィリエイトリンクはMVPに含めていません。将来追加する場合は、リンク付近と必要なページに広告・アフィリエイトであることを明示してください。
+- Amazonアソシエイトの商品リンクを自分自身、家族、友人の購入に使わないでください。
 - 診断は娯楽とインテリア計画の補助を目的としており、心理診断ではありません。
 - Google Fontsが読み込めない環境では、システムフォントとGeorgiaへ自動フォールバックします。

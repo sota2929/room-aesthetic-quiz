@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { heroRoom, roomImages } from './assets'
 import { getCurrentEntry, shouldStartImmediately, withAttribution } from './attribution'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
+import { affiliateProducts, amazonSearchUrl } from './data/affiliateProducts'
 import { getEntryLanding } from './data/entryLanding'
 import { questions } from './data/questions'
 import { productContent } from './data/product'
@@ -252,6 +253,34 @@ function App() {
           </div>
         </section>
 
+        <section className="affiliate-section" aria-labelledby="shop-your-result-heading">
+          <div className="affiliate-heading">
+            <div>
+              <span className="eyebrow">Shop your result</span>
+              <h2 id="shop-your-result-heading">Three pieces to start your {result.name} room</h2>
+            </div>
+            <p>Start with one useful anchor piece, then build slowly. Choose the size, color, and price that fit your room on Amazon.</p>
+          </div>
+          <div className="affiliate-grid">
+            {affiliateProducts[result.id].map((item, index) => (
+              <article className="affiliate-card" key={item.id}>
+                <span className="affiliate-number">0{index + 1}</span>
+                <h3>{item.name}</h3>
+                <p>{item.description}</p>
+                <a
+                  href={amazonSearchUrl(item.search)}
+                  target="_blank"
+                  rel="sponsored noreferrer"
+                  onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { result: result.id, product_category: item.id, position: index + 1 })}
+                >
+                  See options on Amazon <span aria-hidden="true">↗</span>
+                </a>
+              </article>
+            ))}
+          </div>
+          <p className="affiliate-disclosure"><strong>Affiliate disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. Prices and availability are shown on Amazon and may change.</p>
+        </section>
+
         <section className="result-product">
           <div>
             <span className="eyebrow">Take the next step</span>
@@ -269,7 +298,7 @@ function App() {
         <div className="retake-wrap"><button className="secondary-button share-button" onClick={shareResult}>↗ {shareStatus}</button><button className="secondary-button" onClick={retakeQuiz}>↻ Retake quiz</button><button className="text-button" onClick={() => { setScreen('landing'); scrollToTop() }}>Back to home</button></div>
       </main>}
 
-      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · No email required · <a href="./privacy.html">Privacy</a></p></footer>
+      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · No email required · <a href="./privacy.html">Privacy & disclosures</a></p></footer>
     </div>
   )
 }

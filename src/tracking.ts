@@ -24,6 +24,7 @@ const pinterestEventNames: Record<string, string> = {
   quiz_complete: 'lead',
   result_view: 'viewcontent',
   gumroad_click: 'custom',
+  amazon_affiliate_click: 'custom',
   retake_quiz_clicked: 'custom',
   result_shared: 'custom',
 }
