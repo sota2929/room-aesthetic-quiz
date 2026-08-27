@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { heroRoom, roomImages } from './assets'
+import { heroRoom, roomImages, shopImages } from './assets'
 import { getCurrentEntry, shouldStartImmediately, withAttribution } from './attribution'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
 import { affiliateProducts, amazonSearchUrl } from './data/affiliateProducts'
@@ -145,6 +145,7 @@ function App() {
             <p className="hero-description">{entryLanding?.description ?? 'Discover the colors, decor, and first steps that can make your bedroom, dorm, or first apartment feel more like you.'}</p>
             <button className="primary-button" onClick={startQuiz}>{entryLanding?.cta ?? 'Start the Free Quiz'} <span aria-hidden="true">→</span></button>
             <p className="privacy-note"><span aria-hidden="true">✓</span> No email required. Just 12 quick questions.</p>
+            <a className="hero-shop-link" href="#shop-by-style">Already know your style? Shop the edits <span aria-hidden="true">↓</span></a>
             <div className="hero-benefits" aria-label="What the quiz includes">
               <span><strong>Instant</strong> style result</span>
               <span><strong>Personal</strong> color palette</span>
@@ -167,6 +168,7 @@ function App() {
         </section>
 
         <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing' })} />
+        <StyleShopSection onStartQuiz={startQuiz} />
       </main>}
 
       {screen === 'quiz' && <main className="quiz-page">
@@ -254,31 +256,36 @@ function App() {
         </section>
 
         <section className="affiliate-section" aria-labelledby="shop-your-result-heading">
-          <div className="affiliate-heading">
-            <div>
-              <span className="eyebrow">Shop your result</span>
-              <h2 id="shop-your-result-heading">Three pieces to start your {result.name} room</h2>
+          <div className="affiliate-feature">
+            <div className="affiliate-feature-image">
+              <img src={shopImages[result.id]} alt={`Editorial styling example of decor for a ${result.name} room`} loading="lazy" />
+              <span>Curated for your result</span>
             </div>
-            <p>Start with one useful anchor piece, then build slowly. Choose the size, color, and price that fit your room on Amazon.</p>
+            <div className="affiliate-feature-copy">
+              <span className="eyebrow">Shop your result</span>
+              <h2 id="shop-your-result-heading">Start your {result.name} room with three useful pieces.</h2>
+              <p>You do not need to redo the whole room. Pick the one item that solves your biggest gap first—lighting, softness, or storage—then layer from there.</p>
+              <div className="affiliate-proof-row"><span>✓ Result-matched</span><span>✓ Easy first swaps</span><span>✓ Multiple price options</span></div>
+            </div>
           </div>
           <div className="affiliate-grid">
             {affiliateProducts[result.id].map((item, index) => (
               <article className="affiliate-card" key={item.id}>
-                <span className="affiliate-number">0{index + 1}</span>
+                <div className="affiliate-card-top"><span className="affiliate-number">0{index + 1}</span><span>{index === 0 ? 'Best first buy' : index === 1 ? 'Layer in next' : 'Finish the look'}</span></div>
                 <h3>{item.name}</h3>
                 <p>{item.description}</p>
                 <a
                   href={amazonSearchUrl(item.search)}
                   target="_blank"
                   rel="sponsored noreferrer"
-                  onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { result: result.id, product_category: item.id, position: index + 1 })}
+                  onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'result_edit', result: result.id, product_category: item.id, position: index + 1 })}
                 >
-                  See options on Amazon <span aria-hidden="true">↗</span>
+                  Browse this category <span aria-hidden="true">↗</span>
                 </a>
               </article>
             ))}
           </div>
-          <p className="affiliate-disclosure"><strong>Affiliate disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. Prices and availability are shown on Amazon and may change.</p>
+          <p className="affiliate-disclosure"><strong>Image note:</strong> The styling photo is original visual inspiration, not an image of the exact linked listings. <strong>Affiliate disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. Prices and availability are shown on Amazon and may change.</p>
         </section>
 
         <section className="result-product">
@@ -316,6 +323,52 @@ function ProductSection({ onCta }: { onCta: () => void }) {
       <div className="kit-card-title"><span>Room Aesthetic</span><strong>Starter Kit</strong><small>PLAN · STYLE · MAKE IT YOURS</small></div>
       <ul>{productContent.contents.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
     </div>
+  </section>
+}
+
+function StyleShopSection({ onStartQuiz }: { onStartQuiz: () => void }) {
+  return <section className="style-shop-section" id="shop-by-style" aria-labelledby="style-shop-heading">
+    <div className="style-shop-intro">
+      <div>
+        <span className="eyebrow">Already know your vibe?</span>
+        <h2 id="style-shop-heading">Shop a small edit<br /><em>by room style.</em></h2>
+      </div>
+      <div>
+        <p>Skip the endless scroll. Each edit starts with three categories that create the biggest visual change without requiring a full room makeover.</p>
+        <button className="text-button" onClick={onStartQuiz}>Not sure yet? Take the quiz <span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+    <div className="style-shop-grid">
+      {results.map((style) => {
+        const picks = affiliateProducts[style.id]
+        return <article className="style-shop-card" key={style.id} style={{ '--shop-accent': style.accent, '--shop-soft': style.softAccent } as React.CSSProperties}>
+          <a
+            className="style-shop-image-link"
+            href={amazonSearchUrl(`${style.name} bedroom decor`)}
+            target="_blank"
+            rel="sponsored noreferrer"
+            aria-label={`Browse ${style.name} bedroom decor on Amazon`}
+            onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'landing_style_edit', result: style.id, product_category: 'style_edit' })}
+          >
+            <img src={shopImages[style.id]} alt={`Editorial decor styling example for ${style.name}`} loading="lazy" />
+            <span className="style-shop-badge">3-piece edit</span>
+          </a>
+          <div className="style-shop-copy">
+            <div className="style-shop-title"><span aria-hidden="true">{style.symbol}</span><h3>{style.name}</h3></div>
+            <p>{style.tagline}</p>
+            <ul>{picks.map((pick) => <li key={pick.id}>{pick.name}</li>)}</ul>
+            <a
+              className="style-shop-cta"
+              href={amazonSearchUrl(`${style.name} bedroom decor`)}
+              target="_blank"
+              rel="sponsored noreferrer"
+              onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'landing_style_edit', result: style.id, product_category: 'style_edit' })}
+            >Browse the {style.name} edit <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      })}
+    </div>
+    <p className="affiliate-disclosure"><strong>Image note:</strong> These original styling photos are visual inspiration, not images of exact Amazon listings. <strong>Affiliate disclosure:</strong> As an Amazon Associate I earn from qualifying purchases.</p>
   </section>
 }
 
