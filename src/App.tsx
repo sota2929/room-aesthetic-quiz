@@ -113,19 +113,6 @@ function App() {
     }
   }
 
-  const previewCards = useMemo(() => results.map((item) => (
-    <article className="preview-card" key={item.id} style={{ '--card-accent': item.softAccent } as React.CSSProperties}>
-      <div className="preview-image-wrap">
-        <img src={roomImages[item.id]} alt={`${item.name} bedroom inspiration`} loading="lazy" />
-        <span className="preview-symbol" aria-hidden="true">{item.symbol}</span>
-      </div>
-      <div className="preview-card-copy">
-        <h3>{item.name}</h3>
-        <p>{item.tagline}</p>
-      </div>
-    </article>
-  )), [])
-
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -157,14 +144,6 @@ function App() {
             <div className="hero-image-note"><span>6 styles</span><strong>One that feels like you</strong></div>
             <div className="hero-image-badge" aria-hidden="true">✦</div>
           </div>
-        </section>
-
-        <section className="preview-section">
-          <span className="eyebrow">Six possible styles</span>
-          <h2>One room vibe will feel <em>so you.</em></h2>
-          <p>Maybe you love airy neutrals—or maybe your walls need more drama. Your answers will point the way.</p>
-          <div className="preview-grid">{previewCards}</div>
-          <button className="text-button" onClick={startQuiz}>Find my room aesthetic <span>→</span></button>
         </section>
 
         <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing' })} />
