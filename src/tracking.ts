@@ -1,6 +1,7 @@
 import { getAttribution } from './attribution'
 
 type EventProperties = Record<string, string | number | boolean>
+type TrackingOptions = { pinterest?: boolean }
 type PinterestEventData = EventProperties & { event_id: string }
 type PinterestTracker = { (...args: unknown[]): void; queue: unknown[][]; version: string }
 type Gtag = (...args: unknown[]) => void
@@ -66,11 +67,20 @@ function ensureGoogleAnalytics() {
     document.head.appendChild(script)
   }
   if (!googleAnalyticsConfigured) {
+    const attribution = getAttribution()
+    const campaignConfig = attribution.utm_source ? {
+      campaign_source: attribution.utm_source,
+      campaign_medium: attribution.utm_medium,
+      campaign_name: attribution.utm_campaign,
+      campaign_content: attribution.utm_content,
+      campaign_term: attribution.utm_term,
+    } : {}
     window.gtag('js', new Date())
     window.gtag('config', gaMeasurementId, {
       send_page_view: false,
       debug_mode: gaDebugMode,
       linker: { domains: ['sota2929.github.io', 'gumroad.com'] },
+      ...campaignConfig,
     })
     googleAnalyticsConfigured = true
   }
@@ -84,12 +94,12 @@ export function initializeTracking() {
     pintrk('load', pinterestTagId)
     pintrk('page', attribution)
   }
-  ensureGoogleAnalytics()?.('event', 'page_view', attribution)
+  ensureGoogleAnalytics()?.('event', 'page_view', { ...attribution, page_type: 'quiz_landing' })
 }
 
-export function trackEvent(eventName: string, properties: EventProperties = {}) {
+export function trackEvent(eventName: string, properties: EventProperties = {}, options: TrackingOptions = {}) {
   const data = { ...getAttribution(), ...properties, ...(gaDebugMode ? { debug_mode: true } : {}) }
-  if (pinterestTagId) {
+  if (pinterestTagId && options.pinterest !== false) {
     const pinterestEventName = pinterestEventNames[eventName] ?? eventName
     const pinterestData: PinterestEventData = { ...data, event_id: eventId(eventName) }
     if (pinterestEventName === 'lead') pinterestData.lead_type = 'room_aesthetic_quiz_completed'

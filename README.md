@@ -87,7 +87,9 @@ npm run preview
 
 ## UTM・流入別URL
 
-最初のページ表示で `utm_source`、`utm_medium`、`utm_campaign`、`utm_content`、`entry`、`start` を取得し、ブラウザの `sessionStorage` に保存します。その後のPinterest/GA4イベントとGumroad URLへ同じ値を付けます。個人情報は保存しません。
+最初のページ表示で `utm_source`、`utm_medium`、`utm_campaign`、`utm_content`、`utm_term`、`pin_id`、`entry`、`start` を取得し、ブラウザの `sessionStorage` に保存します。その後のPinterest/GA4イベントとGumroad URLへ同じ値を付けます。個人情報は保存しません。
+
+Pinterest流入は大文字小文字や既存リンクの違いにかかわらず、今後のイベントで `utm_source=pinterest`、`utm_medium=organic_social` に正規化します。UTMがない場合でも参照元ホストがPinterestなら同じ分類を設定します。あわせて、`attribution_method`、`landing_path`、`referrer_host`、`traffic_source_group` をイベントへ付け、UTM・参照元・ランディング位置を区別します。
 
 - `?start=1`: ランディングを省略して質問1を表示
 - `?entry=cozy-minimalist` など: Pin内容に合う短いファーストビューを表示
@@ -130,7 +132,7 @@ GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡します。ローカルでは `.env.local` に `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定します。値がなければGAスクリプトもイベントも送信されず、エラーにもなりません。
 
-送信イベントは `page_view`, `quiz_start`, `quiz_complete`, `result_view`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`gumroad_click` の `location` は `landing`, `result_early`, `result_bottom` を区別します。`amazon_affiliate_click` は診断結果、商品カテゴリ、表示位置を送ります。
+送信イベントは `page_view`, `quiz_start`, `quiz_progress`, `quiz_complete`, `result_view`, `section_view`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`quiz_progress` は質問番号・進捗率・開始からの秒数だけをGA4へ送り、回答内容は送りません。`section_view` は主要な商品セクションが実際に50%以上表示されたときだけGA4へ送ります。`gumroad_click` の `location` は `landing`, `result_early`, `result_bottom` を区別します。`amazon_affiliate_click` は診断結果、商品カテゴリ、表示位置、画像またはCTAのどちらがクリックされたかを送ります。
 
 本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1`（または `?debug_mode=true`）を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
 

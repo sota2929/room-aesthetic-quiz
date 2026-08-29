@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { heroRoom, roomImages, shopImages } from './assets'
 import { getCurrentEntry, shouldStartImmediately, withAttribution } from './attribution'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
@@ -42,6 +42,8 @@ function App() {
   const [resultScores, setResultScores] = useState<ScoreMap>(Object.fromEntries(aestheticIds.map((id) => [id, 0])) as ScoreMap)
   const [resultSignals, setResultSignals] = useState<string[]>([])
   const [shareStatus, setShareStatus] = useState('Share my result')
+  const quizStartedAt = useRef<number | null>(initialDirectStart ? Date.now() : null)
+  const viewedSections = useRef(new Set<string>())
   const entryLanding = getEntryLanding(getCurrentEntry())
   const entryImage = entryLanding?.image === 'hero' ? heroRoom : entryLanding ? roomImages[entryLanding.image] : heroRoom
   const productUrl = withAttribution(SITE_CONFIG.productUrl)
@@ -52,6 +54,28 @@ function App() {
       trackEvent(TRACKING_EVENTS.quizStarted, { start_method: 'direct' })
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        const section = (entry.target as HTMLElement).dataset.trackSection
+        if (!section) return
+        const viewKey = `${screen}:${resultId}:${section}`
+        if (viewedSections.current.has(viewKey)) return
+        viewedSections.current.add(viewKey)
+        trackEvent(TRACKING_EVENTS.sectionViewed, {
+          section,
+          screen,
+          ...(screen === 'result' ? { result: resultId } : {}),
+        }, { pinterest: false })
+        observer.unobserve(entry.target)
+      })
+    }, { threshold: 0.5 })
+    document.querySelectorAll<HTMLElement>('[data-track-section]').forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [screen, resultId])
 
   const currentQuestion = questions[questionIndex]
   const result = resultsById[resultId]
@@ -64,17 +88,24 @@ function App() {
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
-  const startQuiz = () => {
+  const startQuiz = (startMethod: string) => {
     setAnswers({})
     setQuestionIndex(0)
     setScreen('quiz')
     setShareStatus('Share my result')
-    trackEvent(TRACKING_EVENTS.quizStarted)
+    quizStartedAt.current = Date.now()
+    trackEvent(TRACKING_EVENTS.quizStarted, { start_method: startMethod })
     scrollToTop()
   }
 
   const chooseAnswer = (answerId: string) => {
     const nextAnswers = { ...answers, [currentQuestion.id]: answerId }
+    const elapsedSeconds = Math.max(0, Math.round((Date.now() - (quizStartedAt.current ?? Date.now())) / 1000))
+    trackEvent(TRACKING_EVENTS.quizProgress, {
+      question_number: questionIndex + 1,
+      progress_percent: Math.round(((questionIndex + 1) / questions.length) * 100),
+      elapsed_seconds: elapsedSeconds,
+    }, { pinterest: false })
     setAnswers(nextAnswers)
     if (questionIndex < questions.length - 1) {
       setTimeout(() => setQuestionIndex((index) => index + 1), 150)
@@ -85,14 +116,14 @@ function App() {
     setResultScores(nextResult.scores)
     setResultSignals(nextResult.signals)
     setScreen('result')
-    trackEvent(TRACKING_EVENTS.quizCompleted, { result: nextResult.id })
+    trackEvent(TRACKING_EVENTS.quizCompleted, { result: nextResult.id, duration_seconds: elapsedSeconds, answer_count: questions.length })
     trackEvent(TRACKING_EVENTS.resultViewed, { result: nextResult.id })
     scrollToTop()
   }
 
   const retakeQuiz = () => {
     trackEvent(TRACKING_EVENTS.retakeQuizClicked, { previous_result: resultId })
-    startQuiz()
+    startQuiz('retake')
   }
 
   const shareResult = async () => {
@@ -124,13 +155,13 @@ function App() {
       </header>
 
       {screen === 'landing' && <main>
-        <section className={`hero ${entryLanding ? 'entry-hero' : ''}`}>
+        <section className={`hero ${entryLanding ? 'entry-hero' : ''}`} data-track-section="landing_hero">
           <div className="hero-copy">
             <span className="eyebrow"><span>✦</span> {entryLanding?.eyebrow ?? 'Your dream room starts here'}</span>
             <h1>{entryLanding ? <>{entryLanding.headline}<br /><em>{entryLanding.emphasis}</em></> : <>What’s Your<br /><em>Room Aesthetic?</em></>}</h1>
             <p className="hero-subtitle">Take the free 12-question quiz and get an instant room style result.</p>
             <p className="hero-description">{entryLanding?.description ?? 'Discover the colors, decor, and first steps that can make your bedroom, dorm, or first apartment feel more like you.'}</p>
-            <button className="primary-button" onClick={startQuiz}>{entryLanding?.cta ?? 'Start the Free Quiz'} <span aria-hidden="true">→</span></button>
+            <button className="primary-button" onClick={() => startQuiz('hero')}>{entryLanding?.cta ?? 'Start the Free Quiz'} <span aria-hidden="true">→</span></button>
             <p className="privacy-note"><span aria-hidden="true">✓</span> No email required. Just 12 quick questions.</p>
             <a className="hero-shop-link" href="#shop-by-style">Already know your style? Shop the edits <span aria-hidden="true">↓</span></a>
             <div className="hero-benefits" aria-label="What the quiz includes">
@@ -146,15 +177,15 @@ function App() {
           </div>
         </section>
 
-        <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing' })} />
-        <StyleShopSection onStartQuiz={startQuiz} />
+        <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing', destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })} />
+        <StyleShopSection onStartQuiz={() => startQuiz('style_shop')} />
       </main>}
 
       {screen === 'quiz' && <main className="quiz-page">
         <section className="quiz-card" aria-live="polite">
           <div className="quiz-topline">
             <span>Question {questionIndex + 1} of {questions.length}</span>
-            <button className="restart-link" onClick={startQuiz}>Start over</button>
+            <button className="restart-link" onClick={() => startQuiz('restart')}>Start over</button>
           </div>
           <div className="progress-track" role="progressbar" aria-valuenow={questionIndex + 1} aria-valuemin={1} aria-valuemax={questions.length} aria-label="Quiz progress">
             <span style={{ width: `${progress}%` }} />
@@ -194,9 +225,9 @@ function App() {
           <div className="vibe-row">{result.vibe.map((word) => <span key={word}>{word}</span>)}</div>
         </section>
 
-        <section className="result-early-product" aria-label="Room Aesthetic Starter Kit">
+        <section className="result-early-product" aria-label="Room Aesthetic Starter Kit" data-track-section="result_gumroad_early">
           <div><span className="eyebrow">Make your {result.name} result real</span><h2>Turn this direction into a room plan.</h2><p>Use the $7 Starter Kit to choose your palette, layout, priorities, budget, and shopping list before you buy.</p></div>
-          <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_early', result: result.id })}>Get the $7 Starter Kit <span>↗</span></a>
+          <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_early', result: result.id, destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })}>Get the $7 Starter Kit <span>↗</span></a>
         </section>
 
         <section className="result-content">
@@ -234,7 +265,7 @@ function App() {
           </div>
         </section>
 
-        <section className="affiliate-section" aria-labelledby="shop-your-result-heading">
+        <section className="affiliate-section" aria-labelledby="shop-your-result-heading" data-track-section="result_amazon_edits">
           <div className="affiliate-feature">
             <div className="affiliate-feature-image">
               <img src={shopImages[result.id]} alt={`Editorial styling example of decor for a ${result.name} room`} loading="lazy" />
@@ -257,7 +288,7 @@ function App() {
                   href={amazonSearchUrl(item.search)}
                   target="_blank"
                   rel="sponsored noreferrer"
-                  onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'result_edit', result: result.id, product_category: item.id, position: index + 1 })}
+                  onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'result_edit', result: result.id, product_category: item.id, position: index + 1, destination: 'amazon', link_type: 'search', search_term: item.search, click_target: 'cta' })}
                 >
                   Browse this category <span aria-hidden="true">↗</span>
                 </a>
@@ -267,7 +298,7 @@ function App() {
           <p className="affiliate-disclosure"><strong>Image note:</strong> The styling photo is original visual inspiration, not an image of the exact linked listings. <strong>Affiliate disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. Prices and availability are shown on Amazon and may change.</p>
         </section>
 
-        <section className="result-product">
+        <section className="result-product" data-track-section="result_gumroad_bottom">
           <div>
             <span className="eyebrow">Take the next step</span>
             <h2>{productContent.resultHeadline}</h2>
@@ -277,7 +308,7 @@ function App() {
           <div className="product-cta-box">
             <span className="coming-soon">{productContent.statusLabel}</span>
             <p>Plan your palette, priorities, layout, and shopping list—without buying random decor first.</p>
-            <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_bottom', result: result.id })}>{productContent.buttonLabel} <span>↗</span></a>
+            <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_bottom', result: result.id, destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })}>{productContent.buttonLabel} <span>↗</span></a>
             <small>{productContent.priceNote}</small>
           </div>
         </section>
@@ -290,7 +321,7 @@ function App() {
 }
 
 function ProductSection({ onCta }: { onCta: () => void }) {
-  return <section className="product-section">
+  return <section className="product-section" data-track-section="landing_gumroad_offer">
     <div className="product-copy">
       <span className="eyebrow">{productContent.statusLabel}</span>
       <h2>A room plan you’ll<br /><em>actually use.</em></h2>
@@ -306,7 +337,7 @@ function ProductSection({ onCta }: { onCta: () => void }) {
 }
 
 function StyleShopSection({ onStartQuiz }: { onStartQuiz: () => void }) {
-  return <section className="style-shop-section" id="shop-by-style" aria-labelledby="style-shop-heading">
+  return <section className="style-shop-section" id="shop-by-style" aria-labelledby="style-shop-heading" data-track-section="landing_affiliate_edits">
     <div className="style-shop-intro">
       <div>
         <span className="eyebrow">Already know your vibe?</span>
@@ -327,7 +358,7 @@ function StyleShopSection({ onStartQuiz }: { onStartQuiz: () => void }) {
             target="_blank"
             rel="sponsored noreferrer"
             aria-label={`Browse ${style.name} bedroom decor on Amazon`}
-            onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'landing_style_edit', result: style.id, product_category: 'style_edit' })}
+            onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'landing_style_edit', result: style.id, product_category: 'style_edit', destination: 'amazon', link_type: 'search', search_term: `${style.name} bedroom decor`, click_target: 'image' })}
           >
             <img src={shopImages[style.id]} alt={`Editorial decor styling example for ${style.name}`} loading="lazy" />
             <span className="style-shop-badge">3-piece edit</span>
@@ -341,7 +372,7 @@ function StyleShopSection({ onStartQuiz }: { onStartQuiz: () => void }) {
               href={amazonSearchUrl(`${style.name} bedroom decor`)}
               target="_blank"
               rel="sponsored noreferrer"
-              onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'landing_style_edit', result: style.id, product_category: 'style_edit' })}
+              onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'landing_style_edit', result: style.id, product_category: 'style_edit', destination: 'amazon', link_type: 'search', search_term: `${style.name} bedroom decor`, click_target: 'cta' })}
             >Browse the {style.name} edit <span aria-hidden="true">↗</span></a>
           </div>
         </article>

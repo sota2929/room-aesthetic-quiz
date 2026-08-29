@@ -70,7 +70,7 @@ Every Pin must be attributable from impression through product click:
 4. Early or bottom Starter Kit CTA
 5. Gumroad product page with the original UTM values preserved
 
-Use `utm_source=pinterest`, `utm_medium=organic`, and `utm_campaign=room_quiz` on every organic Pin. Set `utm_content` to the Pin ID, such as `P041`.
+Use `utm_source=pinterest`, `utm_medium=organic_social`, and `utm_campaign=room_quiz` on every organic Pin. Set `utm_content` to the Pin ID, such as `P041`.
 
 - Quiz invitations and comparison Pins use `start=1` to open question 1 immediately.
 - Aesthetic teasers use the matching `entry` value so the focused first view bridges the Pin and the quiz.

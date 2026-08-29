@@ -12,6 +12,8 @@ export const TRACKING_EVENTS = {
   resultViewed: 'result_view',
   productCtaClicked: 'gumroad_click',
   affiliateProductClicked: 'amazon_affiliate_click',
+  quizProgress: 'quiz_progress',
+  sectionViewed: 'section_view',
   retakeQuizClicked: 'retake_quiz_clicked',
   resultShared: 'result_shared',
 } as const
