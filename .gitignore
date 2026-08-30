@@ -5,3 +5,6 @@ dist
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+tmp/
+# Paid customer files and Gumroad originals stay local; only web-safe previews are committed.
+/product/

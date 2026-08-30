@@ -10,7 +10,7 @@ Pinterestから訪れた米国のGen Zユーザー向けに、12問の回答か�
 - 1問ずつ進む12問の診断（進捗、戻る、最初からやり直す機能付き）
 - Cozy Minimalist / Clean Girl Room / Dark Academia / Soft Girl / Pastel Room / Modern Boho / Moody Maximalist の6結果
 - 色、雰囲気、装飾、避けるもの、最初の3ステップの個別提案
-- Room Aesthetic Starter Kit（$7）の紹介とGumroadリンク
+- Small Bedroom Layout & Shopping Kit（$7）の実物プレビューとGumroadリンク
 - 診断結果別のAmazonアソシエイト商品カテゴリ（各3件）とクリック計測
 - Pinterest Tagと任意のGA4によるページ訪問・診断・商品CTAのイベントトラッキング
 - Pinterest流入UTMのセッション保存、流入別ランディング、クイズ直行URL
@@ -185,7 +185,7 @@ Amazonの価格・レビュー・商品画像はサイト内に複製せず、�
 1. スマートフォン実機で全診断フローを確認する。
 2. GitHub Pagesへ公開し、Pinterestから遷移する公開URLを確定する。
 3. Canvaで最初の3テンプレートと10枚のPinを制作する。
-4. Starter Kitの最小版を作り、Gumroad商品ページを正式公開する。
+4. 24ページPDF＋編集用予算ワークブックをGumroadで販売し、購入導線を継続改善する。
 5. 30〜50枚の無料Pinを投稿し、保存とアウトバウンドクリックを比較する。
 6. 反応の良い切り口が分かってから、分析ツールや広告を検討する。
 

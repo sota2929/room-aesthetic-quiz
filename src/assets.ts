@@ -11,9 +11,14 @@ import darkAcademiaShop from './assets/shop/dark-academia-shop.webp'
 import modernBohoShop from './assets/shop/modern-boho-shop.webp'
 import moodyMaximalistShop from './assets/shop/moody-maximalist-shop.webp'
 import softGirlShop from './assets/shop/soft-girl-shop.webp'
+import kitCover from './assets/product/kit-cover.webp'
+import kitPages from './assets/product/kit-pages.webp'
+import kitWorkbook from './assets/product/kit-workbook.webp'
 import type { AestheticId } from './types'
 
 export { heroRoom }
+
+export const productImages = { cover: kitCover, pages: kitPages, workbook: kitWorkbook }
 
 export const roomImages: Record<AestheticId, string> = {
   'cozy-minimalist': cozyMinimalist,

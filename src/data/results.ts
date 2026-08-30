@@ -10,7 +10,7 @@ export const results: AestheticResult[] = [
     decor: ['Soft, solid-color bedding', 'A warm bedside lamp', 'A simple nightstand', 'Woven storage baskets', 'A neutral rug', 'One or two minimal prints'],
     avoid: ['Too many competing colors', 'Clutter on open surfaces', 'Oversized decor in a small room', 'Harsh cool-white lighting'],
     steps: ['Clear out anything that fights your calm palette.', 'Choose one warm neutral as your base color.', 'Add warmth through lighting, bedding, and texture.'],
-    kitBestFor: ['Declutter checklist', 'Color palette planner', 'Decor priority list'], accent: '#8B7158', softAccent: '#E8DCCC',
+    kitBestFor: ['10 × 10 layout', 'Cozy recipe', '$100 example'], accent: '#8B7158', softAccent: '#E8DCCC',
   },
   {
     id: 'clean-girl', name: 'Clean Girl Room', symbol: '✦',
@@ -21,7 +21,7 @@ export const results: AestheticResult[] = [
     decor: ['A clean desk setup', 'A simple mirror', 'Matching minimal storage', 'Fresh, layered bedding', 'A tray organizer', 'A small self-care corner'],
     avoid: ['Messy catch-all surfaces', 'Dark, heavy color blocks', 'Too many unrelated posters', 'Mismatched visible storage'],
     steps: ['Reset your desk and bedside area.', 'Choose matching organizers for daily essentials.', 'Create one clean morning or self-care corner.'],
-    kitBestFor: ['Desk reset checklist', 'Decor priority list', 'Routine corner planner'], accent: '#A77B73', softAccent: '#F0DEDA',
+    kitBestFor: ['Desk-friendly layout', 'Clean Girl recipe', 'Shopping scorecard'], accent: '#A77B73', softAccent: '#F0DEDA',
   },
   {
     id: 'dark-academia', name: 'Dark Academia', symbol: '⌁',
@@ -32,7 +32,7 @@ export const results: AestheticResult[] = [
     decor: ['Books you actually enjoy', 'Dark wood tones', 'Vintage-style frames', 'A warm desk lamp', 'Classic art prints', 'A focused study corner'],
     avoid: ['Neon accent colors', 'Shiny plastic decor', 'Large empty walls', 'Cool, extra-bright lighting'],
     steps: ['Build one focused reading or study corner.', 'Bring in warm light and a dark accent color.', 'Layer books, frames, and fabric for depth.'],
-    kitBestFor: ['Moodboard template', 'Gallery wall planner', 'Study corner checklist'], accent: '#5B493D', softAccent: '#D8CDBA',
+    kitBestFor: ['Study-first layout', 'Dark Academia recipe', '$200 plan'], accent: '#5B493D', softAccent: '#D8CDBA',
   },
   {
     id: 'soft-girl', name: 'Soft Girl / Pastel Room', symbol: '♡',
@@ -43,7 +43,7 @@ export const results: AestheticResult[] = [
     decor: ['Pastel bedding', 'Cute accent pillows', 'Warm fairy lights', 'A small plush accent', 'A curated wall collage', 'Pretty closed storage'],
     avoid: ['Too many dark colors', 'Harsh high-contrast pieces', 'Clutter without a palette', 'Decor that feels too formal'],
     steps: ['Pick two or three pastels for your palette.', 'Make your bed or desk the cute focal point.', 'Add small soft details, leaving some open space.'],
-    kitBestFor: ['Color palette planner', 'Decor shopping list', 'Moodboard template'], accent: '#B37886', softAccent: '#F2DCE4',
+    kitBestFor: ['Soft Girl recipe', '$50 reset', 'Shopping scorecard'], accent: '#B37886', softAccent: '#F2DCE4',
   },
   {
     id: 'modern-boho', name: 'Modern Boho', symbol: '☼',
@@ -54,7 +54,7 @@ export const results: AestheticResult[] = [
     decor: ['Easy-care plants', 'Rattan accents', 'Woven baskets', 'Textured pillows', 'A warm-toned rug', 'Natural wood pieces'],
     avoid: ['Cold all-gray interiors', 'Too many shiny modern pieces', 'Plants blocking every surface', 'Bright artificial colors'],
     steps: ['Choose two or three warm earth tones.', 'Add wood, linen, rattan, or woven texture.', 'Create one cozy corner with light and greenery.'],
-    kitBestFor: ['Cozy corner planner', 'Decor shopping list', 'Small-room layout sheet'], accent: '#9C6447', softAccent: '#E7D2BC',
+    kitBestFor: ['8 × 10 layout', 'Modern Boho recipe', 'Budget workbook'], accent: '#9C6447', softAccent: '#E7D2BC',
   },
   {
     id: 'moody-maximalist', name: 'Moody Maximalist', symbol: '✹',
@@ -65,7 +65,7 @@ export const results: AestheticResult[] = [
     decor: ['A curated gallery wall', 'Bold bedding', 'A statement lamp', 'Layered textiles', 'Favorite posters', 'A dramatic mirror'],
     avoid: ['Random clutter', 'Too many unrelated colors', 'A room with no focal point', 'Lighting that flattens dark colors'],
     steps: ['Choose one bold color and two supporting colors.', 'Plan a statement wall or focal zone.', 'Layer decor with intention, not just because it fits.'],
-    kitBestFor: ['Gallery wall planner', 'Color palette planner', 'Decor priority list'], accent: '#61405E', softAccent: '#DCCBDA',
+    kitBestFor: ['Moody recipe', '$200 plan', 'Shopping scorecard'], accent: '#61405E', softAccent: '#DCCBDA',
   },
 ]
 

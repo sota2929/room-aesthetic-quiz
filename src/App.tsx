@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { heroRoom, roomImages, shopImages } from './assets'
+import { heroRoom, productImages, roomImages, shopImages } from './assets'
 import { getCurrentEntry, shouldStartImmediately, withAttribution } from './attribution'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
 import { affiliateProducts, amazonSearchUrl } from './data/affiliateProducts'
@@ -177,6 +177,7 @@ function App() {
           </div>
         </section>
 
+        <FreeValueSection onStartQuiz={() => startQuiz('layout_preview')} />
         <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing', destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })} />
         <StyleShopSection onStartQuiz={() => startQuiz('style_shop')} />
       </main>}
@@ -225,11 +226,6 @@ function App() {
           <div className="vibe-row">{result.vibe.map((word) => <span key={word}>{word}</span>)}</div>
         </section>
 
-        <section className="result-early-product" aria-label="Room Aesthetic Starter Kit" data-track-section="result_gumroad_early">
-          <div><span className="eyebrow">Make your {result.name} result real</span><h2>Turn this direction into a room plan.</h2><p>Use the $7 Starter Kit to choose your palette, layout, priorities, budget, and shopping list before you buy.</p></div>
-          <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_early', result: result.id, destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })}>Get the $7 Starter Kit <span>↗</span></a>
-        </section>
-
         <section className="result-content">
           <div className="style-mix-card">
             <div className="style-mix-copy">
@@ -265,6 +261,8 @@ function App() {
           </div>
         </section>
 
+        <ResultProductSection resultName={result.name} resultId={result.id} bestFor={result.kitBestFor} productUrl={productUrl} />
+
         <section className="affiliate-section" aria-labelledby="shop-your-result-heading" data-track-section="result_amazon_edits">
           <div className="affiliate-feature">
             <div className="affiliate-feature-image">
@@ -298,20 +296,6 @@ function App() {
           <p className="affiliate-disclosure"><strong>Image note:</strong> The styling photo is original visual inspiration, not an image of the exact linked listings. <strong>Affiliate disclosure:</strong> As an Amazon Associate I earn from qualifying purchases. Prices and availability are shown on Amazon and may change.</p>
         </section>
 
-        <section className="result-product" data-track-section="result_gumroad_bottom">
-          <div>
-            <span className="eyebrow">Take the next step</span>
-            <h2>{productContent.resultHeadline}</h2>
-            <p>{productContent.resultDescription} Your best starting pages:</p>
-            <div className="vibe-row">{result.kitBestFor.map((item) => <span key={item}>{item}</span>)}</div>
-          </div>
-          <div className="product-cta-box">
-            <span className="coming-soon">{productContent.statusLabel}</span>
-            <p>Plan your palette, priorities, layout, and shopping list—without buying random decor first.</p>
-            <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_bottom', result: result.id, destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })}>{productContent.buttonLabel} <span>↗</span></a>
-            <small>{productContent.priceNote}</small>
-          </div>
-        </section>
         <div className="retake-wrap"><button className="secondary-button share-button" onClick={shareResult}>↗ {shareStatus}</button><button className="secondary-button" onClick={retakeQuiz}>↻ Retake quiz</button><button className="text-button" onClick={() => { setScreen('landing'); scrollToTop() }}>Back to home</button></div>
       </main>}
 
@@ -323,16 +307,35 @@ function App() {
 function ProductSection({ onCta }: { onCta: () => void }) {
   return <section className="product-section" data-track-section="landing_gumroad_offer">
     <div className="product-copy">
-      <span className="eyebrow">{productContent.statusLabel}</span>
-      <h2>A room plan you’ll<br /><em>actually use.</em></h2>
+      <span className="eyebrow">24-page guide + editable workbook</span>
+      <h2>Plan the room<br /><em>before you shop it.</em></h2>
       <p>{productContent.landingDescription}</p>
-      <a className="secondary-button" href={withAttribution(SITE_CONFIG.productUrl)} target="_blank" rel="noreferrer" onClick={onCta}>Get the Starter Kit <span>↗</span></a>
+      <div className="product-proof"><span>✓ Instant download</span><span>✓ No subscription</span><span>✓ 30-day guarantee</span></div>
+      <a className="primary-button" href={withAttribution(SITE_CONFIG.productUrl)} target="_blank" rel="noreferrer" onClick={onCta}>{productContent.buttonLabel} <span>↗</span></a>
       <small>{productContent.priceNote}</small>
     </div>
-    <div className="kit-card">
-      <div className="kit-card-title"><span>Room Aesthetic</span><strong>Starter Kit</strong><small>PLAN · STYLE · MAKE IT YOURS</small></div>
-      <ul>{productContent.contents.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
+    <div className="product-visuals">
+      <img className="product-cover-image" src={productImages.cover} alt="Small Bedroom Layout and Shopping Kit with real layout, style, and budget previews" loading="lazy" />
+      <div className="product-preview-tabs">
+        <img src={productImages.pages} alt="Four real pages from the 24-page small bedroom guide" loading="lazy" />
+        <img src={productImages.workbook} alt="Editable budget and shopping workbook preview" loading="lazy" />
+      </div>
     </div>
+    <div className="product-includes"><span className="eyebrow">Inside the kit</span><ul>{productContent.contents.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul></div>
+  </section>
+}
+
+function FreeValueSection({ onStartQuiz }: { onStartQuiz: () => void }) {
+  return <section className="free-value-section" data-track-section="landing_layout_preview">
+    <div><span className="eyebrow">Start with the room—not the cart</span><h2>Three decisions make a small bedroom feel bigger.</h2><p>Protect a 30–36 inch main walkway, choose one visual anchor, and solve your biggest daily problem before adding decor.</p><button className="secondary-button" onClick={onStartQuiz}>Find my room style <span>→</span></button></div>
+    <ol><li><span>01</span><div><strong>Measure the fixed things</strong><p>Doors, windows, vents and the furniture you must keep.</p></div></li><li><span>02</span><div><strong>Choose the function</strong><p>Sleep-first, study-first, storage-first—or a balanced plan.</p></div></li><li><span>03</span><div><strong>Buy in the right order</strong><p>Lighting and function first; small decor only after the plan works.</p></div></li></ol>
+  </section>
+}
+
+function ResultProductSection({ resultName, resultId, bestFor, productUrl }: { resultName: string; resultId: AestheticId; bestFor: readonly string[]; productUrl: string }) {
+  return <section className="result-product result-product-upgraded" data-track-section="result_gumroad_offer">
+    <div className="result-product-image"><img src={productImages.cover} alt="Small Bedroom Layout and Shopping Kit preview" loading="lazy" /><span>Real pages shown</span></div>
+    <div><span className="eyebrow">Your practical next step</span><h2>{productContent.resultHeadline}</h2><p>{productContent.resultDescription} Use the {resultName} recipe, then pick the closest layout and budget path.</p><div className="vibe-row">{bestFor.map((item) => <span key={item}>{item}</span>)}</div><div className="product-proof"><span>24 pages</span><span>Editable workbook</span><span>30-day guarantee</span></div><a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_after_plan', result: resultId, destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })}>{productContent.buttonLabel} <span>↗</span></a><small>{productContent.priceNote}</small></div>
   </section>
 }
 
