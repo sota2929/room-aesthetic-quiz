@@ -151,7 +151,7 @@ function App() {
           <span className="brand-mark">RA</span>
           <span>Room Aesthetic Quiz</span>
         </button>
-        <span className="header-note">Free · No email</span>
+        <span className="header-note"><a href="./articles/">Room guides</a> · Free · No email</span>
       </header>
 
       {screen === 'landing' && <main>
@@ -178,6 +178,7 @@ function App() {
         </section>
 
         <FreeValueSection onStartQuiz={() => startQuiz('layout_preview')} />
+        <ArticleFeature />
         <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing', destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })} />
         <StyleShopSection onStartQuiz={() => startQuiz('style_shop')} />
       </main>}
@@ -299,9 +300,21 @@ function App() {
         <div className="retake-wrap"><button className="secondary-button share-button" onClick={shareResult}>↗ {shareStatus}</button><button className="secondary-button" onClick={retakeQuiz}>↻ Retake quiz</button><button className="text-button" onClick={() => { setScreen('landing'); scrollToTop() }}>Back to home</button></div>
       </main>}
 
-      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · No email required · <a href="./privacy.html">Privacy & disclosures</a></p></footer>
+      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · <a href="./articles/">Room guides</a> · <a href="./privacy.html">Privacy & disclosures</a></p></footer>
     </div>
   )
+}
+
+function ArticleFeature() {
+  return <section className="article-feature" data-track-section="landing_article_feature">
+    <img src="./articles/assets/10x10-bedroom-hero.webp" alt="Warm neutral small bedroom with a queen bed and slim desk by the window" loading="lazy" />
+    <div>
+      <span className="eyebrow">New measured room guide</span>
+      <h2>Can a queen bed and desk fit in a 10×10 room?</h2>
+      <p>Yes—but only if the walkway, door swing, and desk depth work together. Compare three floor plans and see the honest trade-offs before you move or buy anything.</p>
+      <a href="./articles/10x10-bedroom-layout/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: '10x10-bedroom-layout', click_target: 'cta' }, { pinterest: false })}>See all 3 floor plans <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
 }
 
 function ProductSection({ onCta }: { onCta: () => void }) {

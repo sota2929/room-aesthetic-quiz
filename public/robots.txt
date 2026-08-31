@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sota2929.github.io/room-aesthetic-quiz/sitemap.xml

@@ -87,14 +87,14 @@ function ensureGoogleAnalytics() {
   return window.gtag
 }
 
-export function initializeTracking() {
-  const attribution = { ...getAttribution(), ...(gaDebugMode ? { debug_mode: true } : {}) }
+export function initializeTracking(pageProperties: EventProperties = {}) {
+  const attribution = { ...getAttribution(), ...pageProperties, ...(gaDebugMode ? { debug_mode: true } : {}) }
   if (pinterestTagId) {
     const pintrk = ensurePinterestTracker()
     pintrk('load', pinterestTagId)
     pintrk('page', attribution)
   }
-  ensureGoogleAnalytics()?.('event', 'page_view', { ...attribution, page_type: 'quiz_landing' })
+  ensureGoogleAnalytics()?.('event', 'page_view', { page_type: 'quiz_landing', ...attribution })
 }
 
 export function trackEvent(eventName: string, properties: EventProperties = {}, options: TrackingOptions = {}) {
