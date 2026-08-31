@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'node:path'
 
 export default defineConfig({
   plugins: [react()],
@@ -9,9 +8,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        articles: resolve(__dirname, 'articles/index.html'),
-        tenByTenBedroomLayout: resolve(__dirname, 'articles/10x10-bedroom-layout/index.html'),
+        main: 'index.html',
+        articles: 'articles/index.html',
+        tenByTenBedroomLayout: 'articles/10x10-bedroom-layout/index.html',
       },
     },
   },
