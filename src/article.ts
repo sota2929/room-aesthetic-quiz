@@ -52,3 +52,13 @@ document.querySelectorAll<HTMLAnchorElement>('[data-amazon-search]').forEach((li
   link.href = url.toString()
   link.dataset.searchTerm = searchTerm
 })
+
+document.querySelectorAll<HTMLButtonElement>('[data-print-guide]').forEach((button) => {
+  button.addEventListener('click', () => {
+    trackEvent('article_print_requested', {
+      article_slug: articleSlug,
+      location: button.dataset.location || 'article',
+    }, { pinterest: false })
+    window.print()
+  })
+})
