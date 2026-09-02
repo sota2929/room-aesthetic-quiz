@@ -309,7 +309,7 @@ function ArticleFeature() {
   return <section className="article-feature" data-track-section="landing_article_feature">
     <img src="./articles/assets/10x10-bedroom-hero.webp" alt="Warm neutral small bedroom with a queen bed and slim desk by the window" loading="lazy" />
     <div>
-      <span className="eyebrow">New measured room guide</span>
+      <span className="eyebrow">10 measured room guides</span>
       <h2>Can a queen bed and desk fit in a 10×10 room?</h2>
       <p>Yes—but only if the walkway, door swing, and desk depth work together. Compare three floor plans and see the honest trade-offs before you move or buy anything.</p>
       <a href="./articles/10x10-bedroom-layout/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: '10x10-bedroom-layout', click_target: 'cta' }, { pinterest: false })}>See all 3 floor plans <span aria-hidden="true">→</span></a>
@@ -317,6 +317,7 @@ function ArticleFeature() {
         <a href="./articles/small-bedroom-desk-dresser/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: 'small-bedroom-desk-dresser', click_target: 'related_link' }, { pinterest: false })}>Desk + dresser</a>
         <a href="./articles/bedroom-layout-clearance-guide/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: 'bedroom-layout-clearance-guide', click_target: 'related_link' }, { pinterest: false })}>Clearance guide</a>
         <a href="./articles/bedside-storage-under-12-inches/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: 'bedside-storage-under-12-inches', click_target: 'related_link' }, { pinterest: false })}>Under-12″ storage</a>
+        <a href="./articles/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: 'articles-index', click_target: 'related_link' }, { pinterest: false })}>Browse all 10 guides</a>
       </div>
     </div>
   </section>
