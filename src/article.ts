@@ -3,12 +3,27 @@ import { SITE_CONFIG, TRACKING_EVENTS } from './config'
 import { initializeTracking, trackEvent } from './tracking'
 
 const articleSlug = document.body.dataset.articleSlug || 'articles-index'
+const articleCategories: Record<string, string> = {
+  'articles-index': 'articles_index',
+  '10x10-bedroom-layout': 'measured_layouts',
+  '8x10-bedroom-full-bed-desk': 'measured_layouts',
+  '9x10-bedroom-queen-bed': 'measured_layouts',
+  'small-bedroom-desk-dresser': 'measured_layouts',
+  'bedroom-layout-clearance-guide': 'measurement_planning',
+  'bedside-storage-under-12-inches': 'storage_furniture',
+  'desks-under-36-inches': 'storage_furniture',
+  'narrow-dressers-under-24-inches': 'storage_furniture',
+  'storage-bed-drawers-vs-lift-up': 'storage_furniture',
+  'dorm-room-shopping-plan-under-300': 'dorm_budget',
+}
+const articleCategory = articleCategories[articleSlug] || 'room_guides'
 
 captureAttribution()
 initializeTracking({
   page_type: articleSlug === 'articles-index' ? 'articles_index' : 'article',
   article_slug: articleSlug,
-  content_group: 'small_bedroom_layouts',
+  article_category: articleCategory,
+  content_group: articleCategory,
 })
 
 document.querySelectorAll<HTMLAnchorElement>('[data-track-link]').forEach((link) => {
@@ -20,6 +35,10 @@ document.querySelectorAll<HTMLAnchorElement>('[data-track-link]').forEach((link)
       destination: link.dataset.destination || new URL(link.href, window.location.href).hostname,
       ...(link.dataset.productCategory ? { product_category: link.dataset.productCategory } : {}),
       ...(link.dataset.searchTerm ? { search_term: link.dataset.searchTerm } : {}),
+      ...(link.dataset.asin ? { product_asin: link.dataset.asin } : {}),
+      ...(link.closest('.product-card')?.querySelector('h3')?.textContent?.trim()
+        ? { product_name: link.closest('.product-card')?.querySelector('h3')?.textContent?.trim() }
+        : {}),
     }, { pinterest: link.dataset.event === TRACKING_EVENTS.affiliateProductClicked })
   })
 })
