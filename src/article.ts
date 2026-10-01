@@ -28,6 +28,9 @@ initializeTracking({
 
 document.querySelectorAll<HTMLAnchorElement>('[data-track-link]').forEach((link) => {
   link.addEventListener('click', () => {
+    const productCard = link.closest<HTMLElement>('.product-card')
+    const productCards = productCard ? Array.from(productCard.parentElement?.querySelectorAll('.product-card') ?? []) : []
+    const productPosition = productCard ? productCards.indexOf(productCard) + 1 : 0
     trackEvent(link.dataset.event || 'article_link_click', {
       article_slug: articleSlug,
       location: link.dataset.location || 'article',
@@ -36,8 +39,11 @@ document.querySelectorAll<HTMLAnchorElement>('[data-track-link]').forEach((link)
       ...(link.dataset.productCategory ? { product_category: link.dataset.productCategory } : {}),
       ...(link.dataset.searchTerm ? { search_term: link.dataset.searchTerm } : {}),
       ...(link.dataset.asin ? { product_asin: link.dataset.asin } : {}),
-      ...(link.closest('.product-card')?.querySelector('h3')?.textContent?.trim()
-        ? { product_name: link.closest('.product-card')?.querySelector('h3')?.textContent?.trim() }
+      ...(productPosition ? { product_position: productPosition } : {}),
+      ...(link.dataset.asin ? { link_type: 'product_detail' } : link.dataset.amazonSearch ? { link_type: 'amazon_search' } : {}),
+      click_text: link.textContent?.trim().slice(0, 100) || 'unlabeled_link',
+      ...(productCard?.querySelector('h3')?.textContent?.trim()
+        ? { product_name: productCard.querySelector('h3')?.textContent?.trim() }
         : {}),
     }, { pinterest: link.dataset.event === TRACKING_EVENTS.affiliateProductClicked })
   })

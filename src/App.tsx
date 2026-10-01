@@ -161,7 +161,9 @@ function App() {
             <h1>{entryLanding ? <>{entryLanding.headline}<br /><em>{entryLanding.emphasis}</em></> : <>What’s Your<br /><em>Room Aesthetic?</em></>}</h1>
             <p className="hero-subtitle">Take the free 12-question quiz and get an instant room style result.</p>
             <p className="hero-description">{entryLanding?.description ?? 'Discover the colors, decor, and first steps that can make your bedroom, dorm, or first apartment feel more like you.'}</p>
-            <button className="primary-button" onClick={() => startQuiz('hero')}>{entryLanding?.cta ?? 'Start the Free Quiz'} <span aria-hidden="true">→</span></button>
+            {entryLanding?.ctaHref
+              ? <a className="primary-button" href={entryLanding.ctaHref} onClick={() => trackEvent('entry_cta_click', { location: 'hero', entry: getCurrentEntry() ?? 'unknown', destination: entryLanding.ctaHref ?? '' }, { pinterest: false })}>{entryLanding.cta} <span aria-hidden="true">→</span></a>
+              : <button className="primary-button" onClick={() => startQuiz('hero')}>{entryLanding?.cta ?? 'Start the Free Quiz'} <span aria-hidden="true">→</span></button>}
             <p className="privacy-note"><span aria-hidden="true">✓</span> No email required. Just 12 quick questions.</p>
             <a className="hero-shop-link" href="#shop-by-style">Already know your style? Shop the edits <span aria-hidden="true">↓</span></a>
             <div className="hero-benefits" aria-label="What the quiz includes">
@@ -324,7 +326,7 @@ function ArticleFeature() {
 }
 
 function ProductSection({ onCta }: { onCta: () => void }) {
-  return <section className="product-section" data-track-section="landing_gumroad_offer">
+  return <section className="product-section" id="layout-kit" data-track-section="landing_gumroad_offer">
     <div className="product-copy">
       <span className="eyebrow">24-page guide + editable workbook</span>
       <h2>Plan the room<br /><em>before you shop it.</em></h2>
@@ -341,6 +343,16 @@ function ProductSection({ onCta }: { onCta: () => void }) {
       </div>
     </div>
     <div className="product-includes"><span className="eyebrow">Inside the kit</span><ul>{productContent.contents.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul></div>
+    <div className="product-decision" data-track-section="landing_gumroad_decision">
+      <div><span className="eyebrow">A good fit if</span><ul>{productContent.bestFor.map((item) => <li key={item}><span aria-hidden="true">✓</span>{item}</li>)}</ul></div>
+      <div><span className="eyebrow">Skip it for now if</span><ul>{productContent.skipIf.map((item) => <li key={item}><span aria-hidden="true">—</span>{item}</li>)}</ul></div>
+      <div className="product-free-vs-paid">
+        <span className="eyebrow">Free guide or paid kit?</span>
+        <p><strong>Use the free room guides</strong> when you need one layout answer or one furniture comparison.</p>
+        <p><strong>Use the $7 kit</strong> when you want the layouts, measurement checklist, style recipes, and editable budget workbook together in one reusable plan.</p>
+        <a href="./articles/" onClick={() => trackEvent('article_link_click', { location: 'landing_gumroad_decision', article_slug: 'articles-index', click_target: 'free_alternative' }, { pinterest: false })}>Browse the free guides first <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
   </section>
 }
 

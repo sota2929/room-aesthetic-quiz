@@ -19,6 +19,7 @@ const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim()
 const debugModeParam = new URLSearchParams(window.location.search).get('debug_mode')
 const gaDebugMode = debugModeParam === '1' || debugModeParam === 'true'
 let googleAnalyticsConfigured = false
+const pageOpenedAt = Date.now()
 
 const pinterestEventNames: Record<string, string> = {
   quiz_start: 'custom',
@@ -98,7 +99,14 @@ export function initializeTracking(pageProperties: EventProperties = {}) {
 }
 
 export function trackEvent(eventName: string, properties: EventProperties = {}, options: TrackingOptions = {}) {
-  const data = { ...getAttribution(), ...properties, ...(gaDebugMode ? { debug_mode: true } : {}) }
+  const documentHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
+  const scrollableHeight = Math.max(1, documentHeight - window.innerHeight)
+  const interactionContext = {
+    seconds_since_page_load: Math.max(0, Math.round((Date.now() - pageOpenedAt) / 1000)),
+    page_scroll_percent: Math.min(100, Math.max(0, Math.round((window.scrollY / scrollableHeight) * 100))),
+    viewport_width: window.innerWidth,
+  }
+  const data = { ...getAttribution(), ...interactionContext, ...properties, ...(gaDebugMode ? { debug_mode: true } : {}) }
   if (pinterestTagId && options.pinterest !== false) {
     const pinterestEventName = pinterestEventNames[eventName] ?? eventName
     const pinterestData: PinterestEventData = { ...data, event_id: eventId(eventName) }
