@@ -179,6 +179,7 @@ function App() {
           </div>
         </section>
 
+        <IntentRouter onStartQuiz={() => startQuiz('intent_router')} />
         <FreeValueSection onStartQuiz={() => startQuiz('layout_preview')} />
         <ArticleFeature />
         <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing', destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })} />
@@ -229,6 +230,13 @@ function App() {
           <div className="vibe-row">{result.vibe.map((word) => <span key={word}>{word}</span>)}</div>
         </section>
 
+        <ResultNextStep
+          resultName={result.name}
+          resultId={result.id}
+          productUrl={productUrl}
+          firstPick={affiliateProducts[result.id][0]}
+        />
+
         <section className="result-content">
           <div className="style-mix-card">
             <div className="style-mix-copy">
@@ -266,7 +274,7 @@ function App() {
 
         <ResultProductSection resultName={result.name} resultId={result.id} bestFor={result.kitBestFor} productUrl={productUrl} />
 
-        <section className="affiliate-section" aria-labelledby="shop-your-result-heading" data-track-section="result_amazon_edits">
+        <section className="affiliate-section" id="shop-your-result" aria-labelledby="shop-your-result-heading" data-track-section="result_amazon_edits">
           <div className="affiliate-feature">
             <div className="affiliate-feature-image">
               <img src={shopImages[result.id]} alt={`Editorial styling example of decor for a ${result.name} room`} loading="lazy" />
@@ -325,12 +333,40 @@ function ArticleFeature() {
   </section>
 }
 
+function IntentRouter({ onStartQuiz }: { onStartQuiz: () => void }) {
+  const trackChoice = (choice: string, destination: string) => trackEvent('intent_choice_click', {
+    location: 'landing_after_hero',
+    choice,
+    destination,
+  }, { pinterest: false })
+
+  return <section className="intent-router" aria-labelledby="intent-router-heading" data-track-section="landing_intent_router">
+    <div className="intent-router-heading">
+      <span className="eyebrow">Choose your fastest next step</span>
+      <h2 id="intent-router-heading">What do you need today?</h2>
+      <p>Start free. Move to a shopping plan only when the room measurements make sense.</p>
+    </div>
+    <div className="intent-router-grid">
+      <button onClick={() => { trackChoice('find_style', 'quiz'); onStartQuiz() }}>
+        <span>01 · 3 minutes</span><strong>Find my room style</strong><small>Take the free 12-question quiz.</small><b>Start the quiz →</b>
+      </button>
+      <a href="./articles/10x10-bedroom-layout/" onClick={() => trackChoice('solve_layout', '10x10_article')}>
+        <span>02 · Free guide</span><strong>See what actually fits</strong><small>Compare queen-bed + desk floor plans.</small><b>View measured layouts →</b>
+      </a>
+      <a href="#layout-kit" onClick={() => trackChoice('build_plan', 'gumroad_preview')}>
+        <span>03 · Full plan</span><strong>Plan before I shop</strong><small>Preview the layouts, checklist, and budget workbook.</small><b>See the $7 kit →</b>
+      </a>
+    </div>
+  </section>
+}
+
 function ProductSection({ onCta }: { onCta: () => void }) {
   return <section className="product-section" id="layout-kit" data-track-section="landing_gumroad_offer">
     <div className="product-copy">
       <span className="eyebrow">24-page guide + editable workbook</span>
       <h2>Plan the room<br /><em>before you shop it.</em></h2>
       <p>{productContent.landingDescription}</p>
+      <p className="product-quick-outcome"><strong>Finish this first:</strong> {productContent.quickOutcome}</p>
       <div className="product-proof"><span>✓ Instant download</span><span>✓ No subscription</span><span>✓ 30-day guarantee</span></div>
       <a className="primary-button" href={withAttribution(SITE_CONFIG.productUrl)} target="_blank" rel="noreferrer" onClick={onCta}>{productContent.buttonLabel} <span>↗</span></a>
       <small>{productContent.priceNote}</small>
@@ -353,6 +389,38 @@ function ProductSection({ onCta }: { onCta: () => void }) {
         <a href="./articles/" onClick={() => trackEvent('article_link_click', { location: 'landing_gumroad_decision', article_slug: 'articles-index', click_target: 'free_alternative' }, { pinterest: false })}>Browse the free guides first <span aria-hidden="true">→</span></a>
       </div>
     </div>
+  </section>
+}
+
+function ResultNextStep({ resultName, resultId, productUrl, firstPick }: {
+  resultName: string
+  resultId: AestheticId
+  productUrl: string
+  firstPick: { id: string; name: string; description: string; search: string }
+}) {
+  return <section className="result-next-step" aria-labelledby="result-next-step-heading" data-track-section="result_next_step">
+    <div className="result-next-step-heading">
+      <span className="eyebrow">Your result is the direction—not the shopping list</span>
+      <h2 id="result-next-step-heading">Choose one useful next step.</h2>
+      <p>Keep the {resultName} look, but solve the room plan or your biggest daily gap before buying decorative extras.</p>
+    </div>
+    <div className="result-next-step-grid">
+      <article className="result-choice result-choice-primary">
+        <span>Best for the whole room</span>
+        <h3>Build a measured plan</h3>
+        <p>{productContent.quickOutcome}</p>
+        <div className="result-choice-proof"><span>4 layouts</span><span>Budget workbook</span><span>$7 once</span></div>
+        <a className="primary-button" href={productUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'result_early_choice', result: resultId, destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7, choice: 'whole_room_plan' })}>Build My Room Plan <span>↗</span></a>
+      </article>
+      <article className="result-choice">
+        <span>Best for one quick improvement</span>
+        <h3>Start with {firstPick.name.toLowerCase()}</h3>
+        <p>{firstPick.description} Compare the dimensions and current listing details before buying.</p>
+        <a className="secondary-button" href={amazonSearchUrl(firstPick.search)} target="_blank" rel="sponsored noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'result_early_choice', result: resultId, product_category: firstPick.id, position: 1, destination: 'amazon', link_type: 'search', search_term: firstPick.search, click_target: 'cta', choice: 'first_useful_item' })}>Browse this first buy <span>↗</span></a>
+        <small>Affiliate link. Prices and availability may change.</small>
+      </article>
+    </div>
+    <a className="result-free-path" href="./articles/" onClick={() => trackEvent('article_link_click', { location: 'result_early_choice', article_slug: 'articles-index', result: resultId, click_target: 'free_alternative' }, { pinterest: false })}>Not ready to shop? Use the free measured guides first →</a>
   </section>
 }
 

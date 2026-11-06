@@ -4,9 +4,10 @@ export const productContent = {
   resultDescription: 'The Small Bedroom Layout & Shopping Kit gives you measured layout examples, a style recipe, and a budget-first buying plan.',
   landingHeadline: 'Plan the room before you shop it.',
   landingDescription: 'A practical 24-page guide plus editable workbook for small bedrooms and dorms. Choose a workable layout, protect your budget, and stop buying decor that does not fit.',
-  buttonLabel: 'Get the $7 Layout & Shopping Kit',
+  buttonLabel: 'Build My Room Plan — $7 Once',
   statusLabel: 'Available now',
   priceNote: '$7 one-time purchase · Instant digital download',
+  quickOutcome: 'In one sitting, choose a layout, record the measurements that can block it, and set a buy-first budget.',
   contents: [
     '4 ready-to-use small-room layouts',
     'Clearance & measurement guide',

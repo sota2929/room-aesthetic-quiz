@@ -132,7 +132,9 @@ GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡します。ローカルでは `.env.local` に `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定します。値がなければGAスクリプトもイベントも送信されず、エラーにもなりません。
 
-送信イベントは `page_view`, `quiz_start`, `quiz_progress`, `quiz_complete`, `result_view`, `section_view`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`quiz_progress` は質問番号・進捗率・開始からの秒数だけをGA4へ送り、回答内容は送りません。`section_view` は主要な商品セクションが実際に50%以上表示されたときだけGA4へ送ります。`gumroad_click` の `location` は `landing`, `result_early`, `result_bottom` を区別します。`amazon_affiliate_click` は診断結果、商品カテゴリ、表示位置、画像またはCTAのどちらがクリックされたかを送ります。
+送信イベントは `page_view`, `quiz_start`, `quiz_progress`, `quiz_complete`, `result_view`, `section_view`, `intent_choice_click`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`quiz_progress` は質問番号・進捗率・開始からの秒数だけをGA4へ送り、回答内容は送りません。`section_view` は主要セクションが実際に50%以上表示されたときだけGA4へ送ります。`intent_choice_click` はトップページでユーザーが選んだ「診断・寸法ガイド・購入計画」を区別します。`gumroad_click` と `amazon_affiliate_click` は `location` でトップ、結果直後、記事の早い導線、下部導線を区別します。
+
+2026年11月の収益導線改善については、`docs/revenue-experiment-2026-11.md` に変更前ベースライン、仮説、評価指標、継続・修正基準を記録しています。
 
 本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1`（または `?debug_mode=true`）を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
 

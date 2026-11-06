@@ -1,4 +1,4 @@
-import { captureAttribution } from './attribution'
+import { captureAttribution, withAttribution } from './attribution'
 import { SITE_CONFIG, TRACKING_EVENTS } from './config'
 import { initializeTracking, trackEvent } from './tracking'
 
@@ -24,6 +24,13 @@ initializeTracking({
   article_slug: articleSlug,
   article_category: articleCategory,
   content_group: articleCategory,
+})
+
+// Preserve the original Pinterest campaign through the article → Gumroad hop.
+// The article's fallback UTM remains useful for direct/SEO visits, while an
+// existing campaign takes precedence so a future purchase can be tied to the pin.
+document.querySelectorAll<HTMLAnchorElement>('[data-destination="gumroad"]').forEach((link) => {
+  link.href = withAttribution(link.href)
 })
 
 document.querySelectorAll<HTMLAnchorElement>('[data-track-link]').forEach((link) => {

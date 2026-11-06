@@ -114,5 +114,7 @@ export function trackEvent(eventName: string, properties: EventProperties = {}, 
     if (pinterestEventName === 'custom') pinterestData.event_name = eventName
     ensurePinterestTracker()('track', pinterestEventName, pinterestData)
   }
-  ensureGoogleAnalytics()?.('event', eventName, data)
+  // External links can open or unload the page immediately. Asking gtag to use
+  // the beacon transport makes those revenue events less likely to be lost.
+  ensureGoogleAnalytics()?.('event', eventName, { ...data, transport_type: 'beacon' })
 }
