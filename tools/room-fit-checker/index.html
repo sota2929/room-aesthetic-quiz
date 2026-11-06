@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Small Bedroom Furniture Fit Checker | Free Room Planning Tool</title>
+  <meta name="description" content="Check whether a bed and desk can fit in your small bedroom. Compare two orientations, estimate clearance, and get a personalized buy-first plan." />
+  <link rel="canonical" href="https://sota2929.github.io/room-aesthetic-quiz/tools/room-fit-checker/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Will It Fit? Free Small Bedroom Furniture Checker" />
+  <meta property="og:description" content="Enter your room, bed, and desk sizes. Get a simplified clearance verdict and a buy-first plan—no email required." />
+  <meta property="og:url" content="https://sota2929.github.io/room-aesthetic-quiz/tools/room-fit-checker/" />
+  <meta property="og:site_name" content="Room Aesthetic Quiz" />
+  <meta property="og:image" content="https://sota2929.github.io/room-aesthetic-quiz/articles/assets/pins/10x10-bedroom-layout-save.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,600;1,600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../src/fit-checker.css" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Small Bedroom Furniture Fit Checker","url":"https://sota2929.github.io/room-aesthetic-quiz/tools/room-fit-checker/","applicationCategory":"LifestyleApplication","operatingSystem":"Any","isAccessibleForFree":true,"description":"A free browser-based tool that compares simplified bed and desk clearances in a small bedroom.","creator":{"@type":"Organization","name":"Room Aesthetic Quiz","url":"https://sota2929.github.io/room-aesthetic-quiz/about/"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sota2929.github.io/room-aesthetic-quiz/"},{"@type":"ListItem","position":2,"name":"Room Fit Checker"}]}
+  </script>
+</head>
+<body data-tool="room-fit-checker">
+  <header class="tool-header"><a class="tool-brand" href="../../"><span>RA</span>Room Aesthetic Quiz</a><nav><a href="../../articles/">Room guides</a><a href="../../?start=1&amp;entry=fit-checker">Style quiz</a></nav></header>
+
+  <main>
+    <header class="tool-hero">
+      <div><p class="breadcrumb"><a href="../../">Home</a> / Free room fit checker</p><span class="kicker">✦ Measure before the cart</span><h1>Will the bed and desk <em>actually fit?</em></h1><p>Compare two basic orientations, estimate your tightest open zone, and turn the result into one useful next action. No login or email. Calculations run in your browser.</p><div class="hero-badges"><span>Free</span><span>About 2 minutes</span><span>Feet + inches</span></div></div>
+      <div class="hero-plan" aria-hidden="true"><span class="plan-bed">BED</span><span class="plan-desk">DESK</span><span class="plan-clear">CLEAR?</span><b>YOUR ROOM</b></div>
+    </header>
+
+    <div class="tool-layout">
+      <form id="fit-form" class="fit-form" novalidate>
+        <div class="form-heading"><span class="kicker">Your measurements</span><h2>Build a quick fit check</h2><p>Use finished furniture dimensions when you have them—not mattress size alone.</p></div>
+
+        <fieldset><legend>1. Room size</legend><div class="field-grid four"><label>Width (ft)<input id="room-width-ft" name="room_width_ft" type="number" min="6" max="30" step="1" value="10" required /></label><label>Width (in)<input id="room-width-in" name="room_width_in" type="number" min="0" max="11" step="1" value="0" required /></label><label>Length (ft)<input id="room-length-ft" name="room_length_ft" type="number" min="6" max="30" step="1" value="10" required /></label><label>Length (in)<input id="room-length-in" name="room_length_in" type="number" min="0" max="11" step="1" value="0" required /></label></div></fieldset>
+
+        <fieldset><legend>2. Furniture</legend><div class="field-grid"><label>Bed size<select id="bed-size" name="bed_size"><option value="twin">Twin · 38 × 75 in</option><option value="twin-xl">Twin XL · 38 × 80 in</option><option value="full">Full · 54 × 75 in</option><option value="queen" selected>Queen · 60 × 80 in</option></select></label><label>Desk width (in)<input id="desk-width" name="desk_width" type="number" min="24" max="84" step="1" value="40" required /></label><label>Desk depth (in)<input id="desk-depth" name="desk_depth" type="number" min="12" max="40" step="1" value="20" required /></label><label>Dresser depth (optional)<input id="dresser-depth" name="dresser_depth" type="number" min="0" max="40" step="1" value="0" /></label></div></fieldset>
+
+        <fieldset><legend>3. What matters most?</legend><div class="choice-grid" id="priority-choices"><label><input type="radio" name="priority" value="workspace" checked /><span><b>Workspace</b><small>Protect desk + chair use</small></span></label><label><input type="radio" name="priority" value="storage" /><span><b>Storage</b><small>Find low-footprint capacity</small></span></label><label><input type="radio" name="priority" value="lighting" /><span><b>Lighting</b><small>Improve the room without floor loss</small></span></label></div></fieldset>
+
+        <fieldset><legend>4. First-step budget</legend><div class="choice-grid budget-grid"><label><input type="radio" name="budget" value="50" /><span><b>Up to $50</b><small>One small, useful fix</small></span></label><label><input type="radio" name="budget" value="100" checked /><span><b>Up to $100</b><small>A focused first layer</small></span></label><label><input type="radio" name="budget" value="200" /><span><b>Up to $200</b><small>Function plus one support piece</small></span></label></div></fieldset>
+
+        <p class="form-error" id="form-error" role="alert"></p><button class="calculate-button" type="submit">Calculate My Fit <span>→</span></button><small class="privacy-line">Raw dimensions stay out of our custom analytics events. A saved link stores its measurements only in the browser URL fragment.</small>
+      </form>
+
+      <aside class="before-check" id="before-check"><span>Before you calculate</span><h2>This is a screening tool—not a floor plan.</h2><ul><li>Measure wall-to-wall inside the room.</li><li>Check the door swing and closet opening separately.</li><li>Use the full bed-frame dimensions if available.</li><li>Keep vents, radiators, and outlets accessible.</li></ul></aside>
+
+      <section class="fit-results" id="fit-results" aria-live="polite" hidden>
+        <div class="result-status"><span id="status-label">RESULT</span><h2 id="result-title"></h2><p id="result-summary"></p></div>
+        <div class="result-metrics"><div><span>Room</span><strong id="metric-room"></strong></div><div><span>Simplified tightest zone</span><strong id="metric-clearance"></strong></div><div><span>Fit signal</span><strong id="metric-status"></strong></div></div>
+
+        <div class="orientation-section"><span class="kicker">Two ways to test the room</span><h3>Compare the orientation—not just the furniture total.</h3><div class="orientation-grid"><article><span>A · Bed along length</span><strong id="orientation-a"></strong><p id="orientation-a-copy"></p></article><article><span>B · Rotate the plan</span><strong id="orientation-b"></strong><p id="orientation-b-copy"></p></article></div></div>
+
+        <div class="buy-order"><span class="kicker">Personalized first actions</span><h3 id="buy-order-title"></h3><ol id="buy-order-list"></ol></div>
+
+        <div class="result-actions"><a id="amazon-result-link" class="action-primary" href="#" target="_blank" rel="sponsored noreferrer">Compare the right category ↗</a><a id="guide-result-link" class="action-secondary" href="../../articles/bedroom-layout-clearance-guide/">Open the matching free guide →</a></div>
+        <p class="affiliate-note">The Amazon button is an affiliate link. The tool does not know a listing’s finished dimensions, seller, price, or returns—verify all four on Amazon before purchasing.</p>
+
+        <div class="save-plan"><div><span class="kicker">Keep the result</span><h3>Save it without creating an account.</h3><p>Your share link contains only the room choices shown above.</p></div><div><button id="copy-plan" type="button">Copy plan link</button><button id="print-plan" type="button">Print result</button></div><span id="save-status" role="status"></span></div>
+
+        <aside class="kit-gap"><div><span class="kicker">When this free check is not enough</span><h3>Turn the screening result into a full shopping plan.</h3><p>The $7 kit adds reusable layout worksheets, a measurement checklist, six style recipes, and an editable budget workbook.</p></div><a id="gumroad-result-link" href="https://sotahara.gumroad.com/l/room-aesthetic-starter-kit" target="_blank" rel="noreferrer">Build the Full Plan — $7 Once ↗</a></aside>
+      </section>
+    </div>
+
+    <section class="tool-method"><div><span class="kicker">How the math works</span><h2>Simple enough to use. Honest about its limits.</h2></div><div class="method-grid"><article><b>01</b><h3>Two orientations</h3><p>The tool tests the room with the bed aligned in both directions and keeps the stronger simplified clearance.</p></article><article><b>02</b><h3>24″ and 30″ signals</h3><p>Thirty inches is treated as a stronger circulation target. Twenty-four inches is labeled tight—not ideal.</p></article><article><b>03</b><h3>No false precision</h3><p>Doors, closets, frames, radiators, and chair movement can invalidate the result. The verdict always asks you to measure them.</p></article></div><a href="../../about/">Read the complete editorial method →</a></section>
+  </main>
+
+  <footer><p>© 2026 Room Aesthetic Quiz</p><p><a href="../../articles/">Room guides</a> · <a href="../../about/">Method</a> · <a href="../../privacy.html">Privacy & disclosures</a></p></footer>
+  <script type="module" src="../../src/fit-checker.ts"></script>
+</body>
+</html>

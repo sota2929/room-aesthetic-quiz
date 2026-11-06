@@ -10,6 +10,8 @@ export default defineConfig({
       input: {
         main: 'index.html',
         articles: 'articles/index.html',
+        roomFitChecker: 'tools/room-fit-checker/index.html',
+        aboutMethod: 'about/index.html',
         tenByTenBedroomLayout: 'articles/10x10-bedroom-layout/index.html',
         smallBedroomDeskDresser: 'articles/small-bedroom-desk-dresser/index.html',
         bedroomLayoutClearanceGuide: 'articles/bedroom-layout-clearance-guide/index.html',

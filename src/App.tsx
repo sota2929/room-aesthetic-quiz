@@ -151,7 +151,7 @@ function App() {
           <span className="brand-mark">RA</span>
           <span>Room Aesthetic Quiz</span>
         </button>
-        <span className="header-note"><a href="./articles/">Room guides</a> · Free · No email</span>
+        <span className="header-note"><a href="./tools/room-fit-checker/">Fit checker</a> · <a href="./articles/">Room guides</a> · Free</span>
       </header>
 
       {screen === 'landing' && <main>
@@ -180,9 +180,11 @@ function App() {
         </section>
 
         <IntentRouter onStartQuiz={() => startQuiz('intent_router')} />
+        <FitCheckerFeature />
         <FreeValueSection onStartQuiz={() => startQuiz('layout_preview')} />
         <ArticleFeature />
         <ProductSection onCta={() => trackEvent(TRACKING_EVENTS.productCtaClicked, { location: 'landing', destination: 'gumroad', product_name: SITE_CONFIG.productName, price_usd: 7 })} />
+        <MethodologySection />
         <StyleShopSection onStartQuiz={() => startQuiz('style_shop')} />
       </main>}
 
@@ -234,7 +236,7 @@ function App() {
           resultName={result.name}
           resultId={result.id}
           productUrl={productUrl}
-          firstPick={affiliateProducts[result.id][0]}
+          picks={affiliateProducts[result.id]}
         />
 
         <section className="result-content">
@@ -310,7 +312,7 @@ function App() {
         <div className="retake-wrap"><button className="secondary-button share-button" onClick={shareResult}>↗ {shareStatus}</button><button className="secondary-button" onClick={retakeQuiz}>↻ Retake quiz</button><button className="text-button" onClick={() => { setScreen('landing'); scrollToTop() }}>Back to home</button></div>
       </main>}
 
-      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · <a href="./articles/">Room guides</a> · <a href="./privacy.html">Privacy & disclosures</a></p></footer>
+      <footer><p>Made for small rooms, fresh starts, and finding your style.</p><p>© {new Date().getFullYear()} Room Aesthetic Quiz · <a href="./tools/room-fit-checker/">Fit checker</a> · <a href="./articles/">Room guides</a> · <a href="./about/">Method</a> · <a href="./privacy.html">Privacy</a></p></footer>
     </div>
   )
 }
@@ -392,12 +394,25 @@ function ProductSection({ onCta }: { onCta: () => void }) {
   </section>
 }
 
-function ResultNextStep({ resultName, resultId, productUrl, firstPick }: {
+function ResultNextStep({ resultName, resultId, productUrl, picks }: {
   resultName: string
   resultId: AestheticId
   productUrl: string
-  firstPick: { id: string; name: string; description: string; search: string }
+  picks: readonly { id: string; name: string; description: string; search: string }[]
 }) {
+  const [selectedPickIndex, setSelectedPickIndex] = useState(0)
+  const selectedPick = picks[selectedPickIndex] ?? picks[0]
+
+  const choosePriority = (index: number) => {
+    setSelectedPickIndex(index)
+    trackEvent('result_priority_selected', {
+      location: 'result_early_choice',
+      result: resultId,
+      product_category: picks[index]?.id ?? 'unknown',
+      position: index + 1,
+    }, { pinterest: false })
+  }
+
   return <section className="result-next-step" aria-labelledby="result-next-step-heading" data-track-section="result_next_step">
     <div className="result-next-step-heading">
       <span className="eyebrow">Your result is the direction—not the shopping list</span>
@@ -414,13 +429,45 @@ function ResultNextStep({ resultName, resultId, productUrl, firstPick }: {
       </article>
       <article className="result-choice">
         <span>Best for one quick improvement</span>
-        <h3>Start with {firstPick.name.toLowerCase()}</h3>
-        <p>{firstPick.description} Compare the dimensions and current listing details before buying.</p>
-        <a className="secondary-button" href={amazonSearchUrl(firstPick.search)} target="_blank" rel="sponsored noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'result_early_choice', result: resultId, product_category: firstPick.id, position: 1, destination: 'amazon', link_type: 'search', search_term: firstPick.search, click_target: 'cta', choice: 'first_useful_item' })}>Browse this first buy <span>↗</span></a>
+        <h3>What is the room missing most?</h3>
+        <div className="result-priority-tabs" aria-label="Choose your biggest room gap">
+          {picks.map((pick, index) => <button key={pick.id} className={selectedPickIndex === index ? 'active' : ''} aria-pressed={selectedPickIndex === index} onClick={() => choosePriority(index)}>{pick.name}</button>)}
+        </div>
+        <p><strong>Start with {selectedPick.name.toLowerCase()}.</strong> {selectedPick.description} Compare the dimensions and current listing details before buying.</p>
+        <a key={selectedPick.id} className="secondary-button" href={amazonSearchUrl(selectedPick.search)} target="_blank" rel="sponsored noreferrer" onClick={() => trackEvent(TRACKING_EVENTS.affiliateProductClicked, { location: 'result_early_choice', result: resultId, product_category: selectedPick.id, position: selectedPickIndex + 1, destination: 'amazon', link_type: 'search', search_term: selectedPick.search, click_target: 'cta', choice: 'priority_selected_item' })}>Compare this category <span>↗</span></a>
         <small>Affiliate link. Prices and availability may change.</small>
       </article>
     </div>
     <a className="result-free-path" href="./articles/" onClick={() => trackEvent('article_link_click', { location: 'result_early_choice', article_slug: 'articles-index', result: resultId, click_target: 'free_alternative' }, { pinterest: false })}>Not ready to shop? Use the free measured guides first →</a>
+  </section>
+}
+
+function FitCheckerFeature() {
+  return <section className="fit-checker-feature" data-track-section="landing_fit_checker">
+    <div className="fit-checker-visual" aria-hidden="true">
+      <div className="mini-room-plan"><span className="mini-bed">BED</span><span className="mini-desk">DESK</span><span className="mini-path">30″ PATH</span></div>
+      <span className="fit-verdict">Fit check: not a moodboard</span>
+    </div>
+    <div>
+      <span className="eyebrow">New free planning tool</span>
+      <h2>Will the furniture fit before you buy it?</h2>
+      <p>Enter your room, bed, desk, priority, and budget. Get a simplified clearance verdict, two orientation checks, a buy-first plan, and a link you can save—no email required.</p>
+      <div className="fit-feature-proof"><span>✓ Inches + feet</span><span>✓ Personalized order</span><span>✓ Printable result</span></div>
+      <a className="primary-button" href="./tools/room-fit-checker/" onClick={() => trackEvent('tool_link_click', { location: 'landing_fit_feature', tool: 'room_fit_checker' }, { pinterest: false })}>Check My Room Fit <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+}
+
+function MethodologySection() {
+  return <section className="methodology-section" data-track-section="landing_methodology">
+    <div className="methodology-heading"><span className="eyebrow">How recommendations are made</span><h2>Useful before beautiful.</h2><p>The site is designed to reduce bad-fit purchases—not to make every product look essential.</p></div>
+    <div className="methodology-grid">
+      <article><span>01</span><h3>Measure</h3><p>Room dimensions, door swing, closet access, and finished furniture size come first.</p></article>
+      <article><span>02</span><h3>Choose the constraint</h3><p>Workspace, storage, lighting, or circulation determines the first useful action.</p></article>
+      <article><span>03</span><h3>Compare honestly</h3><p>Recommendations include fit conditions, compromises, and a free alternative where possible.</p></article>
+      <article><span>04</span><h3>Shop last</h3><p>Amazon links are clearly disclosed. Current price, seller, and returns stay on Amazon.</p></article>
+    </div>
+    <a href="./about/" onClick={() => trackEvent('methodology_link_click', { location: 'landing_methodology' }, { pinterest: false })}>Read the editorial and measurement method →</a>
   </section>
 }
 

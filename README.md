@@ -7,6 +7,7 @@ Pinterestから訪れた米国のGen Zユーザー向けに、12問の回答か�
 ## 実装内容
 
 - Pinterest流入向けランディングページ
+- 無料のSmall Bedroom Furniture Fit Checker（2方向の簡易クリアランス判定、予算別の買う順番、保存・印刷）
 - 1問ずつ進む12問の診断（進捗、戻る、最初からやり直す機能付き）
 - Cozy Minimalist / Clean Girl Room / Dark Academia / Soft Girl / Pastel Room / Modern Boho / Moody Maximalist の6結果
 - 色、雰囲気、装飾、避けるもの、最初の3ステップの個別提案
@@ -54,6 +55,8 @@ npm run preview
 | UTM保存・Gumroadへの引き継ぎ | `src/attribution.ts` |
 | イベント名 | `src/config.ts` の `TRACKING_EVENTS` |
 | イベント送信処理 | `src/tracking.ts` |
+| 家具フィット判定ロジック | `src/fit-checker.ts` |
+| フィットチェッカーUI | `tools/room-fit-checker/index.html`, `src/fit-checker.css` |
 | 色、余白、カード等のデザイン | `src/styles.css` の `:root` |
 | SEO / SNSメタ情報 | `index.html` |
 
@@ -132,9 +135,10 @@ GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 GitHub Actionsはこれをビルド時の `VITE_GA_MEASUREMENT_ID` として渡します。ローカルでは `.env.local` に `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定します。値がなければGAスクリプトもイベントも送信されず、エラーにもなりません。
 
-送信イベントは `page_view`, `quiz_start`, `quiz_progress`, `quiz_complete`, `result_view`, `section_view`, `intent_choice_click`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`quiz_progress` は質問番号・進捗率・開始からの秒数だけをGA4へ送り、回答内容は送りません。`section_view` は主要セクションが実際に50%以上表示されたときだけGA4へ送ります。`intent_choice_click` はトップページでユーザーが選んだ「診断・寸法ガイド・購入計画」を区別します。`gumroad_click` と `amazon_affiliate_click` は `location` でトップ、結果直後、記事の早い導線、下部導線を区別します。
+送信イベントは `page_view`, `quiz_start`, `quiz_progress`, `quiz_complete`, `result_view`, `section_view`, `intent_choice_click`, `fit_checker_start`, `fit_checker_complete`, `fit_checker_saved`, `result_priority_selected`, `gumroad_click`, `amazon_affiliate_click`, `result_shared`, `retake_quiz_clicked` です。`quiz_progress` は質問番号・進捗率・開始からの秒数だけをGA4へ送り、回答内容は送りません。`section_view` は主要セクションが実際に50%以上表示されたときだけGA4へ送ります。フィットチェッカーは氏名・メール等を扱わず、寸法はブラウザ内で計算します。`gumroad_click` と `amazon_affiliate_click` は `location` でトップ、結果直後、記事、ツール、下部導線を区別します。
 
 2026年11月の収益導線改善については、`docs/revenue-experiment-2026-11.md` に変更前ベースライン、仮説、評価指標、継続・修正基準を記録しています。
+11月7日の大幅な成長実験については、`docs/growth-reform-2026-11-07.md` に調査根拠、新規実験、継続・撤回基準を記録しています。
 
 本番でGA4 DebugViewを確認するときは、URLへ `?debug_mode=1`（または `?debug_mode=true`）を付けます。GA設定には `sota2929.github.io` と `gumroad.com` のクロスドメインリンカーを含めています。
 
