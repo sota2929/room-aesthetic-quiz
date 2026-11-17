@@ -151,7 +151,7 @@ function App() {
           <span className="brand-mark">RA</span>
           <span>Room Aesthetic Quiz</span>
         </button>
-        <span className="header-note"><a href="./tools/room-fit-checker/">Fit checker</a> · <a href="./articles/">Room guides</a> · Free</span>
+        <span className="header-note"><a href="./tools/room-fit-checker/">Room Prescription</a> · <a href="./room-recipes/">Room Recipes</a> · <a href="./articles/">Guides</a></span>
       </header>
 
       {screen === 'landing' && <main>
@@ -180,6 +180,7 @@ function App() {
         </section>
 
         <IntentRouter onStartQuiz={() => startQuiz('intent_router')} />
+        <DecisionEngineSection />
         <FitCheckerFeature />
         <FreeValueSection onStartQuiz={() => startQuiz('layout_preview')} />
         <ArticleFeature />
@@ -332,6 +333,19 @@ function ArticleFeature() {
         <a href="./articles/" onClick={() => trackEvent('article_link_click', { location: 'landing_article_feature', article_slug: 'articles-index', click_target: 'related_link' }, { pinterest: false })}>Browse all 10 guides</a>
       </div>
     </div>
+  </section>
+}
+
+function DecisionEngineSection() {
+  const items = [
+    { eyebrow: 'Free · 3 minutes', title: 'Room Prescription', copy: 'Test the bed, desk, dresser, door, closet, and chair. Get three layout directions, size limits, a no-buy verdict, and a saveable result card.', href: './tools/room-fit-checker/', cta: 'Build my prescription', event: 'room_prescription' },
+    { eyebrow: 'Free shared-room tool', title: 'Dorm Split Planner', copy: 'Assign shared purchases, compare each person’s budget, skip duplicates, and export one move-in plan.', href: './tools/dorm-roommate-planner/', cta: 'Split the dorm list', event: 'dorm_planner' },
+    { eyebrow: 'Size × style × budget', title: 'Room Recipes', copy: 'Start with 8×10, 9×10, or 10×10—not a fantasy room. Compare evergreen and 2026 trend directions with a buy-first order.', href: './room-recipes/', cta: 'Browse room recipes', event: 'room_recipes' },
+  ]
+  return <section className="decision-engine" data-track-section="landing_decision_engine">
+    <div className="decision-engine-heading"><span className="eyebrow">From scrolling to deciding</span><h2>A small-room decision engine.</h2><p>The quiz finds the look. These free tools decide what fits, what to buy first, and when the best purchase is no purchase.</p></div>
+    <div className="decision-engine-grid">{items.map((item, index) => <article key={item.event}><span>{item.eyebrow}</span><b>0{index + 1}</b><h3>{item.title}</h3><p>{item.copy}</p><a href={item.href} onClick={() => trackEvent('decision_tool_click', { location: 'landing_decision_engine', tool: item.event }, { pinterest: false })}>{item.cta} →</a></article>)}</div>
+    <div className="decision-engine-free"><a href="./resources/measurement-checklist/" onClick={() => trackEvent('free_resource_click', { location: 'landing_decision_engine', resource: 'measurement_checklist' }, { pinterest: false })}>Print the free measurement + shopping checklist →</a><a href="./services/personalized-fit-review/" onClick={() => trackEvent('fit_review_interest_click', { location: 'landing_decision_engine', offer_price_usd: 29 }, { pinterest: false })}>See the $29 personalized Fit Review beta →</a></div>
   </section>
 }
 
